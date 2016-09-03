@@ -72,6 +72,7 @@ class DHTClient(Thread):
         self.nodes = deque(maxlen=max_node_qsize)
 
     def send_krpc(self, msg, address):
+        print '===>', msg, address
         try:
             self.ufd.sendto(bencode(msg), address)
         except Exception:
@@ -150,7 +151,7 @@ class DHTServer(DHTClient):
                 traceback.print_exc()
 
     def on_message(self, msg, address):
-        print '----', msg, address
+        print '<===', msg, address
         try:
             if msg["y"] == "r":
                 if msg["r"].has_key("nodes"):

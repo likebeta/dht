@@ -6,7 +6,11 @@
 
 
 # 起始node
-BOOTSTRAP_NODES = [("router.bittorrent.com", 6881), ("dht.transmissionbt.com", 6881)]
+BOOTSTRAP_NODES = [
+    ("router.bittorrent.com", 6881),
+    ("dht.transmissionbt.com", 6881),
+    ("router.utorrent.com", 6881)
+]
 
 # 网络超时
 KRPC_TIMEOUT = 10  # 10s

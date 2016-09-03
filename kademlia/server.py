@@ -5,28 +5,24 @@
 # Create: 2016-09-02
 
 import const
-import hashlib
+import utils
+from table import KNode
 from client import DHTClient
-from utils import encode_nodes
-from ktable import KNode
 
 
 class DHTServer(DHTClient):
     """
-    DHT服务器端
-
     服务端必须实现回应ping, find_node, get_peers announce_peer请求
     """
 
-    def __init__(self, fastbot):
-        self.fastbot = fastbot
-        self.table = fastbot.table
+    def __init__(self, handler):
         DHTClient.__init__(self)
+        self.handler = handler
 
     def startProtocol(self):
-        self.joinNetwork()
+        self.join_network()
 
-    def pingReceived(self, res, address):
+    def on_ping(self, res, address):
         """
         回应ping请求
         """
@@ -37,80 +33,77 @@ class DHTServer(DHTClient):
                 "y": "r",
                 "r": {"id": self.table.nid}
             }
-            (ip, port) = address
+            ip, port = address
             self.table.append(KNode(nid, ip, port))
-            self.sendResponse(msg, address)
+            self.send_response(msg, address)
         except KeyError:
             pass
 
-    def findNodeReceived(self, res, address):
+    def on_find_node(self, res, address):
         """
         回应find_node请求
         """
         try:
             target = res["a"]["target"]
-            closeNodes = self.table.findCloseNodes(target, 16)
-            if not closeNodes:
+            close_nodes = self.table.find_close_nodes(target, 16)
+            if not close_nodes:
                 return
 
             msg = {
                 "t": res["t"],
                 "y": "r",
-                "r": {"id": self.table.nid, "nodes": encode_nodes(closeNodes)}
+                "r": {"id": self.table.nid, "nodes": utils.encode_nodes(close_nodes)}
             }
             nid = res["a"]["id"]
-            (ip, port) = address
+            ip, port = address
             self.table.append(KNode(nid, ip, port))
-            self.sendResponse(msg, address)
+            self.send_response(msg, address)
         except KeyError:
             pass
 
-    def getPeersReceived(self, res, address):
+    def on_get_peers(self, res, address):
         """
-        回应get_peers请求, 差不多跟findNodeReceived一样, 只回复nodes. 懒得维护peer信息
+        回应get_peers请求, 差不多跟on_find_node一样, 只回复nodes. 懒得维护peer信息
         """
         try:
-            infohash = res["a"]["info_hash"]
-            closeNodes = self.table.findCloseNodes(infohash, 16)
-            if not closeNodes:
+            info_hash = res["a"]["info_hash"]
+            close_nodes = self.table.find_close_nodes(info_hash, 16)
+            if not close_nodes:
                 return
 
             nid = res["a"]["id"]
-            h = hashlib.sha1()
-            h.update(infohash + nid)
-            token = h.hexdigest()[:const.TOKEN_LENGTH]
+            token = utils.sha1_encode(info_hash + nid)[:const.TOKEN_LENGTH]
             msg = {
                 "t": res["t"],
                 "y": "r",
-                "r": {"id": self.table.nid, "nodes": encode_nodes(closeNodes), "token": token}
+                "r": {"id": self.table.nid, "nodes": utils.encode_nodes(close_nodes), "token": token}
             }
-            (ip, port) = address
+            ip, port = address
             self.table.append(KNode(nid, ip, port))
-            self.sendResponse(msg, address)
+            self.send_response(msg, address)
         except KeyError:
             pass
 
-    def announcePeerReceived(self, res, address):
+    def on_announce_peer(self, res, address):
         """
         回应announce_peer请求
         """
         try:
-            infohash = res["a"]["info_hash"]
+            info_hash = res["a"]["info_hash"]
             token = res["a"]["token"]
             nid = res["a"]["id"]
-            h = hashlib.sha1()
-            h.update(infohash + nid)
-            if h.hexdigest()[:const.TOKEN_LENGTH] == token:
+            _token = utils.sha1_encode(info_hash + nid)[:const.TOKEN_LENGTH]
+            if _token == token:
                 # 验证token成功, 开始下载种子
-                (ip, port) = address
+                ip, port = address
                 port = res["a"]["port"]
-                self.fastbot.downloadTorrent(ip, port, infohash)
-            self.table.touchBucket(nid)
+                self.handler.on_metadata(ip, port, info_hash)
+            self.table.touch_bucket(nid)
             msg = {
                 "t": res["t"],
                 "y": "r",
                 "r": {"id": self.table.nid}
             }
-            self.sendResponse(msg, address)
+            self.send_response(msg, address)
         except KeyError:
             pass

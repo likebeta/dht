@@ -18,10 +18,10 @@ class KRPC(protocol.DatagramProtocol):
         }
 
         self.queryActions = {
-            "ping": self.pingReceived,
-            "find_node": self.findNodeReceived,
-            "get_peers": self.getPeersReceived,
-            "announce_peer": self.announcePeerReceived,
+            "ping": self.on_ping,
+            "find_node": self.on_find_node,
+            "get_peers": self.on_get_peers,
+            "announce_peer": self.on_announce_peer,
         }
 
     def datagramReceived(self, data, address):
@@ -66,7 +66,7 @@ class KRPC(protocol.DatagramProtocol):
         因为爬虫客户端只实现了find_node请求.
         """
         try:
-            self.findNodeHandle(res)
+            self.on_ack_find_node(res)
         except KeyError:
             pass
 

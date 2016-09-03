@@ -23,6 +23,12 @@ def intify(hstr):
     return long(hstr.encode('hex'), 16)
 
 
+def sha1_encode(s):
+    h = hashlib.sha1()
+    h.update(entropy(20))
+    return h.hexdigest()
+
+
 def new_node_id():
     """生成node ID"""
     h = hashlib.sha1()
