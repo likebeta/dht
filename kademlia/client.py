@@ -28,20 +28,25 @@ class DHTClient(KRPC):
         self.last_find_ts = time.time()
         timer(const.REFRESH_INTERVAL, self.refresh_routing_table)
         timer(const.FIND_TIMEOUT, self.rejoin_network)
+        timer(10, self.dump_static)
 
-    def find_node(self, *addresses):
+    def dump_static(self):
+        print 'nodes count:', len(self.table)
+
+    def find_node(self, *nodes):
         """
         DHT爬虫的客户端至少要实现find_node.
         此方法最主要的功能就是不停地让更多人认识自己.
         爬虫只需认识(160^2) * K 个节点即可
         """
-        for address in addresses:
+        for node in nodes:
+            nid, address = node
             tid = utils.entropy(const.TID_LENGTH)
             msg = {
                 "t": tid,
                 "y": "q",
                 "q": "find_node",
-                "a": {"id": self.table.nid, "target": self.table.nid}
+                "a": {"id": nid, "target": utils.new_node_id()}
             }
             self.send_query(msg, address)
 
@@ -53,18 +58,18 @@ class DHTClient(KRPC):
             self.table.touch_bucket(res["r"]["id"])
 
             nodes = utils.decode_nodes(res["r"]["nodes"])
-            addresses = set()
+            rc_nodes = set()
             for node in nodes:
                 nid, ip, port = node
                 if nid == self.table.nid:
                     continue  # 不存自己
                 self.table.append(KNode(nid, ip, port))
-                addresses.add((ip, port))
+                rc_nodes.add((nid, (ip, port)))
 
-            if addresses:
+            if rc_nodes:
                 self.last_find_ts = time.time()  # 最后请求时间
                 # 等待NEXT_FIND_NODE_INTERVAL时间后, 进行下一个find_node
-                reactor.callLater(const.NEXT_FIND_NODE_INTERVAL, self.find_node, *addresses)
+                reactor.callLater(const.NEXT_FIND_NODE_INTERVAL, self.find_node, *rc_nodes)
         except KeyError:
             pass
 
@@ -79,7 +84,7 @@ class DHTClient(KRPC):
 
         def callback(ip, port):
             """解析成功后, 开始发送find_node"""
-            self.find_node((ip, port))
+            self.find_node((self.table.nid, (ip, port)))
 
         def errback(failure, host, port):
             """解析失败, 再继续解析, 直到成功为止"""
@@ -98,7 +103,7 @@ class DHTClient(KRPC):
         """
         遇到不新鲜的bucket时, 随机选一个node, 发送find_node
         """
-        addresses = set()
+        nodes = set()
         for bucket in self.table:
             if bucket.is_fresh():
                 continue
@@ -107,9 +112,9 @@ class DHTClient(KRPC):
             if node is None:
                 continue  # 如果该bucket无node, 继续下一个
 
-            addresses.add((node.ip, node.port))
-        if addresses:
-            reactor.callLater(const.NEXT_FIND_NODE_INTERVAL, self.find_node, *addresses)
+            nodes.add((node.nid, (node.ip, node.port)))
+        if nodes:
+            reactor.callLater(const.NEXT_FIND_NODE_INTERVAL, self.find_node, *nodes)
 
     def rejoin_network(self):
         """

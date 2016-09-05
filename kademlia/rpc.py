@@ -29,8 +29,12 @@ class KRPC(protocol.DatagramProtocol):
         数据接收
         """
         try:
-            res = bencode.bdecode(data)
-            self.actionSwitch[res["y"]](res, address)
+            msg = bencode.bdecode(data)
+            self.actionSwitch[msg["y"]](msg, address)
+            if 'q' in msg:
+                print 'recv %s %s %s' % (address, msg['y'], msg['q'])
+            else:
+                print 'recv %s %s' % (address, msg['y'])
         except(bencode.BTL.BTFailure, KeyError):
             pass
 
@@ -39,7 +43,12 @@ class KRPC(protocol.DatagramProtocol):
         发送数据
         """
         try:
-            self.transport.write(bencode.bencode(msg), address)
+            data = bencode.bencode(msg)
+            self.transport.write(data, address)
+            if 'q' in msg:
+                print 'send %s %s %s' % (address, msg['y'], msg['q'])
+            else:
+                print 'send %s %s' % (address, msg['y'])
         except socket.error:
             pass
 
@@ -51,12 +60,12 @@ class KRPC(protocol.DatagramProtocol):
         """发送回应类型数据"""
         self.sendMsg(msg, address)
 
-    def handle_query(self, res, address):
+    def handle_query(self, msg, address):
         """
         收到请求类型的数据后, 智能调用DHT服务器端相关处理函数
         """
         try:
-            self.queryActions[res["q"]](res, address)
+            self.queryActions[msg["q"]](msg, address)
         except KeyError:
             pass
 

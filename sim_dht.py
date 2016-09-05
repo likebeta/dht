@@ -72,10 +72,10 @@ class DHTClient(Thread):
         self.nodes = deque(maxlen=max_node_qsize)
 
     def send_krpc(self, msg, address):
-        print '===>', msg, address
         try:
             self.ufd.sendto(bencode(msg), address)
         except Exception:
+            print msg
             traceback.print_exc()
 
     def send_find_node(self, address, nid=None):
@@ -138,8 +138,6 @@ class DHTServer(DHTClient):
         self.ufd = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         self.ufd.bind((self.bind_ip, self.bind_port))
 
-        timer(RE_JOIN_DHT_INTERVAL, self.re_join_DHT)
-
     def run(self):
         self.re_join_DHT()
         while True:
@@ -151,7 +149,6 @@ class DHTServer(DHTClient):
                 traceback.print_exc()
 
     def on_message(self, msg, address):
-        print '<===', msg, address
         try:
             if msg["y"] == "r":
                 if msg["r"].has_key("nodes"):
@@ -162,6 +159,7 @@ class DHTServer(DHTClient):
                 except KeyError:
                     self.play_dead(msg, address)
         except KeyError:
+            print msg
             traceback.print_exc()
 
     def on_get_peers_request(self, msg, address):

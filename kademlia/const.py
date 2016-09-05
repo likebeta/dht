@@ -16,7 +16,7 @@ BOOTSTRAP_NODES = [
 KRPC_TIMEOUT = 10  # 10s
 
 # 进行下一个find_node请求前的暂停时间
-NEXT_FIND_NODE_INTERVAL = 25 / 1000.0  # 25ms
+NEXT_FIND_NODE_INTERVAL = 250 / 1000.0  # 250ms
 
 # 每bucket最多含多少node
 K = 8
@@ -38,4 +38,4 @@ BUCKET_LIFETIME = 15 * 60  # 15m
 FIND_TIMEOUT = 10  # 10s
 
 # 生成多少个node实例, 请根据自身网络状况调试. 默认值是在带宽: 100M, CPU: 单核, 内存: 512M 的Xen VPS运行良好
-NODE_COUNT = 5
+NODE_COUNT = 1

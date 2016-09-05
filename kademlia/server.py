@@ -67,7 +67,7 @@ class DHTServer(DHTClient):
         """
         try:
             info_hash = res["a"]["info_hash"]
-            close_nodes = self.table.find_close_nodes(info_hash, 16)
+            close_nodes = self.table.find_close_nodes(info_hash, 6)
             if not close_nodes:
                 return
 

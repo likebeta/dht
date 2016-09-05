@@ -25,7 +25,7 @@ def intify(hstr):
 
 def sha1_encode(s):
     h = hashlib.sha1()
-    h.update(entropy(20))
+    h.update(s)
     return h.hexdigest()
 
 
@@ -53,17 +53,19 @@ def int4_to_ipv4(n):
     return '.'.join(q)
 
 
-def decode_nodes(nodes):
+def decode_nodes(data):
     """
-    把收到的nodes转成list
-    数据格式: [(node ID, ip, port), (node ID, ip, port), (node ID, ip, port).... ]
+    转成 [(node ID, ip, port), (node ID, ip, port), (node ID, ip, port).... ]
     """
     n = []
-    node_count = len(nodes) / 26
+    length = len(data)
+    if length % 26 != 0:
+        return n
+    node_count = len(data) / 26
     if node_count > 0:
-        nodes = struct.unpack("!" + "20sIH" * node_count, nodes)
+        data = struct.unpack("!" + "20sIH" * node_count, data)
         for i in xrange(node_count):
-            nid, ip, port = nodes[i * 3], int4_to_ipv4(nodes[i * 3 + 1]), nodes[i * 3 + 2]
+            nid, ip, port = data[i * 3], int4_to_ipv4(data[i * 3 + 1]), data[i * 3 + 2]
             n.append((nid, ip, port))
     return n
 
