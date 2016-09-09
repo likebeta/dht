@@ -29,7 +29,7 @@ def sha1_encode(s):
     return h.hexdigest()
 
 
-def new_node_id():
+def random_node_id():
     """生成node ID"""
     h = hashlib.sha1()
     h.update(entropy(20))
@@ -66,11 +66,11 @@ def decode_nodes(data):
         data = struct.unpack("!" + "20sIH" * node_count, data)
         for i in xrange(node_count):
             nid, ip, port = data[i * 3], int4_to_ipv4(data[i * 3 + 1]), data[i * 3 + 2]
-            n.append((nid, ip, port))
+            n.append((nid, (ip, port)))
     return n
 
 
-def encode_nodes(nodes):
+def encode_nodes(*nodes):
     """
     与 decode_nodes 相反
     """
@@ -79,5 +79,6 @@ def encode_nodes(nodes):
 
     n = []
     for node in nodes:
-        n.extend([node.nid, ipv4_to_int4(node.ip), node.port])
+        nid, (ip, port) = node
+        n.extend([nid, ipv4_to_int4(ip), port])
     return struct.pack("!" + "20sIH" * len(nodes), *n)

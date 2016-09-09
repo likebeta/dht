@@ -16,7 +16,7 @@ BOOTSTRAP_NODES = [
 KRPC_TIMEOUT = 10  # 10s
 
 # 进行下一个find_node请求前的暂停时间
-NEXT_FIND_NODE_INTERVAL = 250 / 1000.0  # 250ms
+FIND_NODE_INTERVAL = 10 / 1000.0
 
 # 每bucket最多含多少node
 K = 8

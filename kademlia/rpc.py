@@ -22,6 +22,8 @@ class KRPC(protocol.DatagramProtocol):
             "find_node": self.on_find_node,
             "get_peers": self.on_get_peers,
             "announce_peer": self.on_announce_peer,
+            # "vote": self.on_vote,
+            # "v": self.on_version,
         }
 
     def datagramReceived(self, data, address):
@@ -31,10 +33,6 @@ class KRPC(protocol.DatagramProtocol):
         try:
             msg = bencode.bdecode(data)
             self.actionSwitch[msg["y"]](msg, address)
-            if 'q' in msg:
-                print 'recv %s %s %s' % (address, msg['y'], msg['q'])
-            else:
-                print 'recv %s %s' % (address, msg['y'])
         except(bencode.BTL.BTFailure, KeyError):
             pass
 
@@ -45,10 +43,6 @@ class KRPC(protocol.DatagramProtocol):
         try:
             data = bencode.bencode(msg)
             self.transport.write(data, address)
-            if 'q' in msg:
-                print 'send %s %s %s' % (address, msg['y'], msg['q'])
-            else:
-                print 'send %s %s' % (address, msg['y'])
         except socket.error:
             pass
 

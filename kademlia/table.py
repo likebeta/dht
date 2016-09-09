@@ -105,7 +105,7 @@ class BucketFull(Exception):
 class KTable(object):
     def __init__(self, nid=None):
         if nid is None:
-            nid = utils.new_node_id()
+            nid = utils.random_node_id()
         self.nid = nid
         self.buckets = [KBucket(0, 2 ** 160)]
 
@@ -119,9 +119,6 @@ class KTable(object):
             pass
 
     def append(self, node):
-        """
-        插入node
-        """
         if self.nid == node.nid:
             return  # 不存储自己
 

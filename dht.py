@@ -25,4 +25,4 @@ class simDHT(object):
 application = service.Application("fastbot")
 f = open("infohash.log", "w")
 for i in range(NODE_COUNT):
-    internet.UDPServer(6881 + i, DHTServer(simDHT(f))).setServiceParent(application)
+    internet.UDPServer(6882 + i, DHTServer(simDHT(f))).setServiceParent(application)
