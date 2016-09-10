@@ -7,7 +7,6 @@
 import time
 import const
 import utils
-import traceback
 import collections
 from rpc import KRPC
 from twisted.internet import reactor
@@ -29,10 +28,6 @@ class DHTClient(KRPC):
         self.last_find_ts = time.time()
         timer(const.FIND_TIMEOUT, self.rejoin_network)
         timer(const.FIND_NODE_INTERVAL, self.find_node)
-        timer(10, self.dump_static)
-
-    def dump_static(self):
-        print 'nodes count:', len(self.nodes)
 
     def find_node(self, *nodes):
         """
@@ -76,8 +71,6 @@ class DHTClient(KRPC):
 
             self.last_find_ts = time.time()  # 最后请求时间
         except KeyError:
-            print 'ack find node', res
-            traceback.print_exc()
             pass
 
     def join_network(self):
@@ -112,18 +105,6 @@ class DHTClient(KRPC):
         """
         if (self.last_find_ts - time.time()) > const.FIND_TIMEOUT:
             self.join_network()
-
-    def error(self, msg, address):
-        try:
-            tid = msg["t"]
-            msg = {
-                "t": tid,
-                "y": "e",
-                "e": [202, "Server Error"]
-            }
-            self.send_response(msg, address)
-        except KeyError:
-            pass
 
     def success(self, msg, address):
         try:

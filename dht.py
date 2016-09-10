@@ -18,11 +18,11 @@ class simDHT(object):
         """
         种子下载, 可以通过迅雷种子, 种子协议, libtorrent下载
         """
-        self.f.write("%s %s %s\n" % (info_hash.encode("hex"), ip, port))
+        self.f.write("%s %s %s\n" % (ip, port, info_hash.encode("hex")))
         self.f.flush()
 
 
 application = service.Application("fastbot")
-f = open("infohash.log", "w")
+f = open("infohash.log", "a")
 for i in range(NODE_COUNT):
     internet.UDPServer(6882 + i, DHTServer(simDHT(f))).setServiceParent(application)

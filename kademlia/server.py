@@ -38,8 +38,6 @@ class DHTServer(DHTClient):
             self.nodes.append((nid, address))
             self.send_response(msg, address)
         except KeyError:
-            print 'on_ping', res
-            traceback.print_exc()
             pass
 
     def on_find_node(self, res, address):
@@ -60,8 +58,6 @@ class DHTServer(DHTClient):
             # self.nodes.append((nid, address))
             self.send_response(msg, address)
         except KeyError:
-            print 'find node', res
-            traceback.print_exc()
             pass
 
     def on_get_peers(self, res, address):
@@ -84,8 +80,6 @@ class DHTServer(DHTClient):
             # self.nodes.append((nid, address))
             self.send_response(msg, address)
         except KeyError:
-            print 'get peers', res
-            traceback.print_exc()
             pass
 
     def on_announce_peer(self, res, address):
@@ -102,14 +96,6 @@ class DHTServer(DHTClient):
                 ip, port = address
                 port = res["a"]["port"]
                 self.handler.on_metadata(ip, port, info_hash)
-            msg = {
-                "t": res["t"],
-                "y": "r",
-                "r": {
-                    "id": self.nid
-                }
-            }
-            self.send_response(msg, address)
         except KeyError:
             pass
         finally:

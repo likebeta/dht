@@ -18,8 +18,8 @@ class KRPC(protocol.DatagramProtocol):
         }
 
         self.queryActions = {
-            "ping": self.on_ping,
-            "find_node": self.on_find_node,
+            # "ping": self.on_ping,
+            # "find_node": self.on_find_node,
             "get_peers": self.on_get_peers,
             "announce_peer": self.on_announce_peer,
             # "vote": self.on_vote,
@@ -61,7 +61,7 @@ class KRPC(protocol.DatagramProtocol):
         try:
             self.queryActions[msg["q"]](msg, address)
         except KeyError:
-            pass
+            self.error(msg, address)
 
     def handle_response(self, res, address):
         """
@@ -76,3 +76,15 @@ class KRPC(protocol.DatagramProtocol):
     def handle_error(self, res, address):
         """收到错误回应, 忽略"""
         pass
+
+    def error(self, msg, address):
+        try:
+            tid = msg["t"]
+            msg = {
+                "t": tid,
+                "y": "e",
+                "e": [202, "Server Error"]
+            }
+            self.send_response(msg, address)
+        except KeyError:
+            pass
