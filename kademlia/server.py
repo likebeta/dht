@@ -6,7 +6,6 @@
 
 import const
 import utils
-import traceback
 from client import DHTClient
 
 
