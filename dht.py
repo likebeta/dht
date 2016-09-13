@@ -14,7 +14,7 @@ from twisted.application import internet
 class simDHT(object):
     def __init__(self, f):
         self.f = f
-        self.hp = hyperloglog.HyperLogLog(0.001)
+        self.hp = hyperloglog.HyperLogLog(0.01)
         self.hp_len = 0
 
     def on_metadata(self, ip, port, info_hash):
