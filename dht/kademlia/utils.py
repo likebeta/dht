@@ -28,7 +28,6 @@ def sha1_encode(s):
     h.update(s)
     return h.hexdigest()
 
-
 def random_node_id():
     """生成node ID"""
     h = hashlib.sha1()

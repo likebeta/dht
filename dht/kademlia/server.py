@@ -81,21 +81,27 @@ class DHTServer(DHTClient):
         except KeyError:
             pass
 
-    def on_announce_peer(self, res, address):
+    def on_announce_peer(self, msg, address):
         """
         回应announce_peer请求
         """
         try:
-            info_hash = res["a"]["info_hash"]
-            token = res["a"]["token"]
-            nid = res["a"]["id"]
+            info_hash = msg["a"]["info_hash"]
+            token = msg["a"]["token"]
+            nid = msg["a"]["id"]
             _token = utils.sha1_encode(info_hash + nid)[:const.TOKEN_LENGTH]
             if _token == token:
                 # 验证token成功, 开始下载种子
-                ip, port = address
-                port = res["a"]["port"]
-                self.handler.on_metadata(ip, port, info_hash)
+                if msg['a'].get('implied_port', 0) != 0:
+                    port = address[1]
+                else:
+                    port = msg["a"]["port"]
+                if port < 1 or port > 65535:
+                    return
+                print '----msg', msg
+                print '----', info_hash.encode('hex'), address[0], port, address[1]
+                self.handler.on_metadata(info_hash, address[0], port, nid)
         except KeyError:
             pass
         finally:
-            self.success(res, address)
+            self.success(msg, address)

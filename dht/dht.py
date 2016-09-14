@@ -17,7 +17,7 @@ class simDHT(object):
         self.hp = hyperloglog.HyperLogLog(0.01)
         self.hp_len = 0
 
-    def on_metadata(self, ip, port, info_hash):
+    def on_metadata(self, info_hash, ip, port, peer_id):
         """
         种子下载, 可以通过迅雷种子, 种子协议, libtorrent下载
         """
@@ -26,8 +26,14 @@ class simDHT(object):
         hp_len = self.hp.card()
         if self.hp_len != hp_len:
             self.hp_len = hp_len
-            self.f.write("%s %s %s\n" % (ip, port, info_hash.encode("hex")))
-            self.f.flush()
+            # self.f.write("%s %s %s\n" % (ip, port, hex_hash))
+            # self.f.flush()
+            print "%s %s %s\n" % (ip, port, hex_hash)
+            from downloader import Downloader
+            result = Downloader.download_metadata(info_hash, (ip, port), peer_id)
+            if result:
+                with open(result[0], 'w') as fp:
+                    fp.write(result[1])
 
 
 application = service.Application("fastbot")
