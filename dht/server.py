@@ -5,15 +5,14 @@
 # Create: 2016-09-02
 
 import hyperloglog
-from kademlia.server import DHTServer
-from kademlia.const import NODE_COUNT
-from twisted.application import service
-from twisted.application import internet
+from util.log import Logger
+from dht.kademlia.server import DHTServer
+from dht.kademlia.const import NODE_COUNT
+from twisted.internet import reactor
 
 
 class simDHT(object):
-    def __init__(self, f):
-        self.f = f
+    def __init__(self):
         self.hp = hyperloglog.HyperLogLog(0.01)
         self.hp_len = 0
 
@@ -26,17 +25,19 @@ class simDHT(object):
         hp_len = self.hp.card()
         if self.hp_len != hp_len:
             self.hp_len = hp_len
-            # self.f.write("%s %s %s\n" % (ip, port, hex_hash))
-            # self.f.flush()
-            print "%s %s %s\n" % (ip, port, hex_hash)
+            Logger.info("%s %s %s" % (ip, port, hex_hash))
             from downloader import Downloader
             result = Downloader.download_metadata(info_hash, (ip, port), peer_id)
             if result:
-                with open(result[0], 'w') as fp:
+                with open("torrent/" + result[0], 'w') as fp:
                     fp.write(result[1])
 
 
-application = service.Application("fastbot")
-f = open("infohash.log", "a")
-for i in range(NODE_COUNT):
-    internet.UDPServer(6882 + i, DHTServer(simDHT(f))).setServiceParent(application)
+if __name__ == '__main__':
+    import os
+    os.makedirs('torrent')
+    Logger.show_task_id(False)
+    Logger.open_std_log()
+    for i in range(NODE_COUNT):
+        reactor.listenUDP(6882 + i, DHTServer(simDHT()))
+    reactor.run()

@@ -9,7 +9,8 @@ import time
 import struct
 import socket
 import bencode
-from kademlia import utils
+from util.log import Logger
+from dht.kademlia import utils
 
 
 class Downloader(object):
@@ -41,7 +42,7 @@ class Downloader(object):
     @classmethod
     def __url_from_torcache(cls, info_hash):
         # see other http://torrage.info
-        return 'http://torrage.com/torrent/%s.torrent' % info_hash
+        return 'http://torrage.info/torrent.php?h=%s' % info_hash
 
     @classmethod
     def __url_from_zoink(cls, info_hash):
@@ -51,48 +52,39 @@ class Downloader(object):
     def download_metadata(cls, info_hash, address, peer_id=None):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            print '------connect'
             sock.settimeout(5)
             sock.connect(address)
 
-            print '------send handshake'
             # handshake
             cls.send_handshake(sock, info_hash, peer_id)
             packet = sock.recv(4096)
-            print '------recv handshake', repr(packet)
 
-            print '------check handshake'
-            # handshake error
+            # check handshake
             if not cls.check_handshake(packet, info_hash):
                 return
 
-            print '------send ext handshake'
             # ext handshake
             cls.send_ext_handshake(sock)
             packet = sock.recv(4096)
 
-            print '------recv ext handshake', repr(packet)
             # get ut_metadata and metadata_size
             ut_metadata, metadata_size = cls.get_ut_metadata(packet), cls.get_metadata_size(packet)
-            print '-----------------ut_metadata_size: ', metadata_size
 
             # request each piece of metadata
             metadata = []
             for piece in range(int(math.ceil(metadata_size / (16.0 * 1024)))):
                 cls.request_metadata(sock, ut_metadata, piece)
                 packet = cls.recvall(sock, 5)
-                print '---------------piece', repr(packet)
                 metadata.append(packet[packet.index("ee") + 2:])
 
             metadata = ''.join(metadata)
             try:
                 info = bencode.bdecode(metadata)
-                print '-----------------Fetched', info["name"], "size: ", len(metadata)
+                Logger.info('-----------------Fetched', info["name"], "size: ", len(metadata))
                 return info["name"], metadata
             except:
                 pass
-        except socket.timeout:
-            print '-----------------socket timeout'
+        except socket.error:
             pass
         except Exception, e:
             import traceback
@@ -130,7 +122,6 @@ class Downloader(object):
     @classmethod
     def send_packet(cls, sock, msg):
         sock.send(msg)
-        print '-----send packet', repr(msg)
 
     @classmethod
     def send_message(cls, sock, msg):
@@ -193,3 +184,13 @@ class Downloader(object):
         start = data.index(metadata_size) + len(metadata_size) + 1
         data = data[start:]
         return int(data[:data.index("e")])
+
+
+if __name__ == '__main__':
+    with open('../info_hash.log.sorted') as f:
+        for line in f:
+            ip, port, infohash = line.split()
+            result = Downloader.download_metadata(infohash[:40].decode('hex'), (ip, int(port)))
+            if result:
+                with open(result[0], 'w') as fp:
+                    fp.write(result[1])

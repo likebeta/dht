@@ -2,3 +2,4 @@ bencode
 twisted
 hyperloglog
 pygeoip
+service_identity
