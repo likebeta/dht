@@ -35,9 +35,11 @@ class simDHT(object):
 
 if __name__ == '__main__':
     import os
-    os.makedirs('torrent')
+    if not os.path.exists('torrent'):
+        os.makedirs('torrent')
     Logger.show_task_id(False)
     Logger.open_std_log()
     for i in range(NODE_COUNT):
         reactor.listenUDP(6882 + i, DHTServer(simDHT()))
+        Logger.info('listen on udp port', 6882 + i)
     reactor.run()

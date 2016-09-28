@@ -11,6 +11,7 @@ import collections
 from rpc import KRPC
 from twisted.internet import reactor
 from twisted.application import internet
+from util.log import Logger
 
 
 def timer(step, callback, *args):
@@ -27,7 +28,9 @@ class DHTClient(KRPC):
         self.nodes = collections.deque(maxlen=10000)
         self.last_find_ts = time.time()
         timer(const.FIND_TIMEOUT, self.rejoin_network)
+        Logger.info('start timer: rejoin_network')
         timer(const.FIND_NODE_INTERVAL, self.find_node)
+        Logger.info('start timer: find_node')
 
     def find_node(self, *nodes):
         """
