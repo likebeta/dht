@@ -23,10 +23,11 @@ class simDHT(object):
         种子下载, 可以通过迅雷种子, 种子协议, libtorrent下载
         """
         hex_hash = info_hash.encode('hex')
-        self.hp.add(hex_hash)
-        hp_len = self.hp.card()
-        if self.hp_len != hp_len:
-            self.hp_len = hp_len
+        # self.hp.add(hex_hash)
+        # hp_len = self.hp.card()
+        # if self.hp_len != hp_len:
+        #     self.hp_len = hp_len
+        if not os.path.exists('metadata/%s.metadata' % info_hash):
             Logger.info('%s %s %s' % (ip, port, hex_hash))
             d = defer.Deferred()
             d.addCallback(self.on_success_download, hex_hash)
@@ -36,7 +37,7 @@ class simDHT(object):
 
     def on_success_download(self, metadata, info_hash):
         Logger.info('success:', info_hash, metadata['name'], len(metadata))
-        with open('metadata/%s.metadata' % metadata['name'], 'w') as fp:
+        with open('metadata/%s.metadata' % info_hash, 'w') as fp:
             import bencode
             fp.write(bencode.bencode(metadata))
 
