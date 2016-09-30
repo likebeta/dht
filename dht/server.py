@@ -9,6 +9,8 @@ from util.log import Logger
 from dht.kademlia.server import DHTServer
 from dht.kademlia.const import NODE_COUNT
 from twisted.internet import reactor
+from twisted.internet import defer
+from protocol import TcpClientFactory
 
 
 class simDHT(object):
@@ -20,23 +22,33 @@ class simDHT(object):
         """
         种子下载, 可以通过迅雷种子, 种子协议, libtorrent下载
         """
-        hex_hash = info_hash.encode("hex")
+        hex_hash = info_hash.encode('hex')
         self.hp.add(hex_hash)
         hp_len = self.hp.card()
         if self.hp_len != hp_len:
             self.hp_len = hp_len
-            Logger.info("%s %s %s" % (ip, port, hex_hash))
-            from downloader import Downloader
-            result = Downloader.download_metadata(info_hash, (ip, port), peer_id)
-            if result:
-                with open("torrent/" + result[0], 'w') as fp:
-                    fp.write(result[1])
+            Logger.info('%s %s %s' % (ip, port, hex_hash))
+            d = defer.Deferred()
+            d.addCallback(self.on_success_download, hex_hash)
+            d.addErrback(self.on_failed_download, hex_hash)
+            factory = TcpClientFactory(d, info_hash, peer_id)
+            reactor.connectTCP(ip, port, factory)
+
+    def on_success_download(self, metadata, info_hash):
+        Logger.info('success:', info_hash, metadata['name'], len(metadata))
+        with open('metadata/%s.metadata' % metadata['name'], 'w') as fp:
+            import bencode
+            fp.write(bencode.bencode(metadata))
+
+    def on_failed_download(self, error, info_hash):
+        Logger.info('failed :', info_hash, repr(error))
 
 
 if __name__ == '__main__':
     import os
-    if not os.path.exists('torrent'):
-        os.makedirs('torrent')
+
+    if not os.path.exists('metadata'):
+        os.makedirs('metadata')
     Logger.show_task_id(False)
     Logger.open_std_log()
     for i in range(NODE_COUNT):
