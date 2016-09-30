@@ -99,7 +99,6 @@ class DHTServer(DHTClient):
                     port = msg["a"]["port"]
                 if port < 1 or port > 65535:
                     return
-                Logger.info('----', info_hash.encode('hex'), address[0], port, address[1])
                 self.handler.on_metadata(info_hash, address[0], port, nid)
         except KeyError:
             pass

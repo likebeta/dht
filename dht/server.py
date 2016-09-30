@@ -4,6 +4,7 @@
 # Author: likebeta <ixxoo.me@gmail.com>
 # Create: 2016-09-02
 
+import bencode
 import hyperloglog
 from util.log import Logger
 from dht.kademlia.server import DHTServer
@@ -28,7 +29,7 @@ class simDHT(object):
         # if self.hp_len != hp_len:
         #     self.hp_len = hp_len
         if not os.path.exists('metadata/%s.metadata' % hex_hash):
-            Logger.info('%s %s %s' % (ip, port, hex_hash))
+            Logger.info('%s %s %s' % (hex_hash, ip, port))
             d = defer.Deferred()
             d.addCallback(self.on_success_download, hex_hash)
             d.addErrback(self.on_failed_download, hex_hash)
@@ -38,7 +39,6 @@ class simDHT(object):
     def on_success_download(self, metadata, info_hash):
         Logger.info('success:', info_hash, metadata['name'])
         with open('metadata/%s.metadata' % info_hash, 'w') as fp:
-            import bencode
             fp.write(bencode.bencode(metadata))
 
     def on_failed_download(self, error, info_hash):

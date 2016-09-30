@@ -93,7 +93,6 @@ class TcpClientProtocol(Protocol):
         self.sendPacket(header + data)
 
     def stop(self):
-        Logger.info('active close connect')
         self.transport.loseConnection()
 
     def connectionMade(self):
@@ -290,7 +289,10 @@ class TcpClientProtocol(Protocol):
         sep = data.index('ee') + 2
         header = bencode.bdecode(data[:sep])
         if header['msg_type'] != 1:
-            raise Exception('error msg_type' + str(header['msg_type']))
+            Logger.info('error msg_type', header['msg_type'])
+            self.stop()
+            return
+
         body = data[sep:]
         self.metadata += body
         if len(self.metadata) < self.metadata_size:
