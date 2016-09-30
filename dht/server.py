@@ -27,7 +27,7 @@ class simDHT(object):
         # hp_len = self.hp.card()
         # if self.hp_len != hp_len:
         #     self.hp_len = hp_len
-        if not os.path.exists('metadata/%s.metadata' % info_hash):
+        if not os.path.exists('metadata/%s.metadata' % hex_hash):
             Logger.info('%s %s %s' % (ip, port, hex_hash))
             d = defer.Deferred()
             d.addCallback(self.on_success_download, hex_hash)
@@ -36,7 +36,7 @@ class simDHT(object):
             reactor.connectTCP(ip, port, factory)
 
     def on_success_download(self, metadata, info_hash):
-        Logger.info('success:', info_hash, metadata['name'], len(metadata))
+        Logger.info('success:', info_hash, metadata['name'])
         with open('metadata/%s.metadata' % info_hash, 'w') as fp:
             import bencode
             fp.write(bencode.bencode(metadata))

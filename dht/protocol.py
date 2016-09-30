@@ -70,7 +70,7 @@ class TcpClientProtocol(Protocol):
                             Logger.debug("==== RECV:", cmd, len(data), repr(data))
                         self.on_message(cmd, data)
         except Exception, e:
-            Logger.exception()
+            Logger.exception(repr(data))
             self.transport.loseConnection()
 
     def sendPacket(self, data):
