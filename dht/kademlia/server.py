@@ -6,7 +6,6 @@
 
 import const
 import utils
-from util.log import Logger
 from client import DHTClient
 
 

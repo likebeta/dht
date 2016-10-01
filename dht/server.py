@@ -4,45 +4,54 @@
 # Author: likebeta <ixxoo.me@gmail.com>
 # Create: 2016-09-02
 
-import bencode
+import json
+# import bencode
 import hyperloglog
 from util.log import Logger
 from dht.kademlia.server import DHTServer
 from dht.kademlia.const import NODE_COUNT
 from twisted.internet import reactor
 from twisted.internet import defer
-from protocol import TcpClientFactory
+from dht.protocol import TcpClientFactory
+from dht.parser import Parser
 
 
 class simDHT(object):
     def __init__(self):
         self.hp = hyperloglog.HyperLogLog(0.01)
         self.hp_len = 0
+        self.dl_set = set()
 
     def on_metadata(self, info_hash, ip, port, peer_id):
         """
         种子下载, 可以通过迅雷种子, 种子协议, libtorrent下载
         """
-        hex_hash = info_hash.encode('hex')
-        # self.hp.add(hex_hash)
+        # self.hp.add(info_hash)
         # hp_len = self.hp.card()
         # if self.hp_len != hp_len:
         #     self.hp_len = hp_len
-        if not os.path.exists('metadata/%s.metadata' % hex_hash):
-            Logger.info('%s %s %s' % (hex_hash, ip, port))
+        if info_hash not in self.dl_set:
+            self.dl_set.add(info_hash)
+            hex_hash = info_hash.encode('hex')
+            # if not os.path.exists('metadata/%s' % hex_hash):
+            Logger.info(hex_hash, ip, port)
             d = defer.Deferred()
             d.addCallback(self.on_success_download, hex_hash)
             d.addErrback(self.on_failed_download, hex_hash)
             factory = TcpClientFactory(d, info_hash, peer_id)
             reactor.connectTCP(ip, port, factory)
 
-    def on_success_download(self, metadata, info_hash):
-        Logger.info('success:', info_hash, metadata['name'])
-        with open('metadata/%s.metadata' % info_hash, 'w') as fp:
-            fp.write(bencode.bencode(metadata))
+    def on_success_download(self, metadata, hex_hash):
+        Logger.info(hex_hash, 'success', metadata['name'])
+        info = Parser.parse_torrent(metadata)
+        if info:
+            data_json = json.dumps(info, separators=(',', ':'))
+            with open('metadata/%s' % hex_hash, 'w') as fp:
+                fp.write(data_json)
 
-    def on_failed_download(self, error, info_hash):
-        Logger.info('failed :', info_hash, repr(error))
+    def on_failed_download(self, error, hex_hash):
+        self.dl_set.discard(hex_hash)
+        Logger.info(hex_hash, 'failed', error.getErrorMessage())
 
 
 if __name__ == '__main__':

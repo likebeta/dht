@@ -39,10 +39,11 @@ class TcpClientProtocol(Protocol):
     def __init__(self, info_hash, peer_id=None):
         self.has_handshake = False
         self.metadata = ''
-        self.metadata_size = 0
+        # self.metadata_size = 0
         self.ut_metadata = 0
         self._data = ''
         self.info_hash = info_hash
+        self.hex_hash = info_hash.encode('hex')
         if peer_id is None:
             peer_id = utils.random_node_id()
         self.peer_id = peer_id
@@ -56,21 +57,21 @@ class TcpClientProtocol(Protocol):
             if self.has_handshake:
                 while len(self._data) > 4:
                     length = struct.unpack('>I', self._data[:4])[0]
+                    if length > len(self._data) - 4:
+                        return
+
+                    data, self._data = self._data[4:4 + length], self._data[4 + length:]
                     if length == 0:
                         if DEBUG:
-                            Logger.debug("==== RECV: keep alive")
+                            Logger.debug(self.hex_hash, '==== RECV: keep alive')
                         self.on_keep_alive()
                     else:
-                        if length > len(self._data) - 4:
-                            return
-
-                        data, self._data = self._data[4:4 + length], self._data[4 + length:]
                         cmd, data = ord(data[0]), data[1:]
                         if DEBUG:
-                            Logger.debug("==== RECV:", cmd, len(data), repr(data))
+                            Logger.debug(self.hex_hash, '==== RECV:', cmd, len(data))
                         self.on_message(cmd, data)
         except Exception, e:
-            Logger.exception(repr(data))
+            Logger.exception(self.hex_hash, repr(data))
             self.transport.loseConnection()
 
     def sendPacket(self, data):
@@ -78,14 +79,14 @@ class TcpClientProtocol(Protocol):
             try:
                 self.transport.write(data)
                 if DEBUG:
-                    Logger.debug('==== SEND:', data)
+                    Logger.debug(self.hex_hash, '==== SEND:', repr(data))
                 return True
             except Exception, e:
-                Logger.exception()
+                Logger.exception(self.info_hash)
                 self.transport.loseConnection()
                 return False
         else:
-            Logger.info('not connect, cannot send msg', data)
+            Logger.info(self.hex_hash, 'not connect, cannot send msg', repr(data))
             return False
 
     def sendMsg(self, data):
@@ -281,7 +282,7 @@ class TcpClientProtocol(Protocol):
 
     def on_ext_handshake(self, data):
         info = bencode.bdecode(data)
-        self.metadata_size = info['metadata_size']
+        # self.metadata_size = info['metadata_size']
         self.ut_metadata = info['m']['ut_metadata']
         self.send_ext_metadata(0)
 
@@ -289,13 +290,13 @@ class TcpClientProtocol(Protocol):
         sep = data.index('ee') + 2
         header = bencode.bdecode(data[:sep])
         if header['msg_type'] != 1:
-            Logger.info('error msg_type', header['msg_type'])
+            Logger.info(self.hex_hash, 'error msg_type ', header['msg_type'])
             self.stop()
             return
 
         body = data[sep:]
         self.metadata += body
-        if len(self.metadata) < self.metadata_size:
+        if len(self.metadata) < header['total_size']:
             self.send_ext_metadata(header['piece'] + 1)
         else:
             if self.check_metadata():

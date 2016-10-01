@@ -12,10 +12,12 @@ import bencode
 class Parser(object):
     @classmethod
     def parse_torrent(cls, data):
-        try:
-            torrent = bencode.bdecode(data)
-        except:
-            return None
+        torrent = data
+        if not isinstance(torrent, dict):
+            try:
+                torrent = bencode.bdecode(torrent)
+            except:
+                return None
         info = {}
         try:
             info['create_ts'] = int(torrent['creation date'])
