@@ -4,9 +4,9 @@
 # Author: likebeta <ixxoo.me@gmail.com>
 # Create: 2016-09-27
 
-import time
 # import hashlib
 import bencode
+import datetime
 
 
 class Parser(object):
@@ -20,9 +20,9 @@ class Parser(object):
                 return None
         info = {}
         try:
-            info['create_ts'] = int(torrent['creation date'])
+            info['create_time'] = datetime.datetime.fromtimestamp(float(torrent['creation date']))
         except:
-            info['create_ts'] = int(time.time())
+            info['create_time'] = datetime.datetime.now()
 
         encoding = torrent.get('encoding', 'utf8')
         if torrent.get('announce'):

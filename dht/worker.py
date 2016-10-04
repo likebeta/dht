@@ -16,7 +16,7 @@ from dht.protocol import TcpClientFactory
 from dht.parser import Parser
 
 
-class simDHT(object):
+class DHTWorker(object):
     def __init__(self):
         self.hp = hyperloglog.HyperLogLog(0.01)
         self.hp_len = 0
@@ -61,7 +61,8 @@ if __name__ == '__main__':
         os.makedirs('metadata')
     Logger.show_task_id(False)
     Logger.open_std_log()
+    worker = DHTWorker()
     for i in range(NODE_COUNT):
-        reactor.listenUDP(6882 + i, DHTServer(simDHT()))
+        reactor.listenUDP(6882 + i, DHTServer(worker))
         Logger.info('listen on udp port', 6882 + i)
     reactor.run()
