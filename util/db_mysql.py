@@ -51,5 +51,21 @@ class DbMySql(object):
         Logger.debug('mysql %s: <===' % alias_name, sql_str, sql_arg_list, result)
         returnValue(result)
 
+    @inlineCallbacks
+    def operation(self, alias_name, sql_str, *sql_arg_list):
+        pool = self.__CONN_MYSQL__[alias_name]
+        Logger.debug('mysql %s: ===>' % alias_name, sql_str, *sql_arg_list)
+        result = yield pool.runOperation(sql_str, sql_arg_list)
+        Logger.debug('mysql %s: <===' % alias_name, sql_str, *sql_arg_list)
+        returnValue(result)
+
+    @inlineCallbacks
+    def interaction(self, alias_name, func, *args):
+        pool = self.__CONN_MYSQL__[alias_name]
+        Logger.debug('mysql %s: ===>' % alias_name, *args)
+        result = yield pool.runInteraction(func, *args)
+        Logger.debug('mysql %s: <===' % alias_name, args, result)
+        returnValue(result)
+
 
 DbMySql = DbMySql()

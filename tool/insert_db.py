@@ -39,9 +39,9 @@ def inset_data(path):
         if files:
             files = json.dumps(files, separators=(',', ':'))
 
-        sql_str = 'INSERT IGNORE INTO bt(info_hash,name,length,create_time,files) VALUES(%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE hit=hit+1;'
+        sql_str = 'INSERT INTO bt(info_hash,name,length,create_time,files) VALUES(%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE hit=hit+1;'
         sql_arg_list = (mt['info_hash'], mt['name'], mt['length'], str(mt['create_time']), files)
-        d = DbMySql.query('dht', sql_str, *sql_arg_list)
+        d = DbMySql.operation('dht', sql_str, *sql_arg_list)
         d.addBoth(result_callback, sql_str, sql_arg_list)
 
 

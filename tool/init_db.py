@@ -27,13 +27,13 @@ def main():
         "`create_time` DATETIME NOT NULL," +
         "`name` VARCHAR(255) NOT NULL," +
         "`hit` BIGINT(8) NOT NULL DEFAULT '1'," +
-        "`access_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
+        "`access_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
         "`length` BIGINT(8) NOT NULL DEFAULT '0'," +
         "`files` TEXT DEFAULT NULL)" +
         "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;"
     )
     for sql_str in sql_str_list:
-        result = yield DbMySql.query('dht', sql_str)
+        result = yield DbMySql.operation('dht', sql_str)
         if isinstance(result, Failure):
             Logger.debug(sql_str, result.getErrorMessage())
             reactor.stop()
