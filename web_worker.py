@@ -9,9 +9,10 @@ from twisted.internet import defer
 from twisted.internet import reactor
 from twisted.python.failure import Failure
 from util.log import Logger
-from util.response import JsonResult
-from util.response import XmlResult
-from util.response import HtmlResult
+from util.response import http_response
+from util.response import http_response_500
+from util.response import http_response_404
+from util.response import http_response_403
 from util.exceptions import SystemException
 from util.exceptions import NotFoundException
 from util.exceptions import ForbiddenException
@@ -27,22 +28,14 @@ class ServerHttpProtocol(BasicHttpProtocol):
     def __defer_callback(self, result, request):
         if request._disconnected:
             Logger.info('<====', request.path, 'connection lost')
-        elif isinstance(result, Failure):
+            return
+
+        if isinstance(result, Failure):
             Logger.exception()
-            body = '{"error":500,"desc":"System Error"}'
-            request.setResponseCode(500)
-            request.setHeader('Content-Type', 'application/json; charset=utf-8')
-            request.setHeader('Content-Length', str(len(body)))
-            request.write(body)
-            request.finish()
-            Logger.debug('<====', request.path, 'json', body)
+            body, content_type = http_response_500(request)
         else:
-            body = str(result)
-            request.setHeader('Content-Type', 'application/json; charset=utf-8')
-            request.setHeader('Content-Length', str(len(body)))
-            request.write(body)
-            request.finish()
-            Logger.debug('<====', request.path, 'json', body)
+            body, content_type = http_response(request, result)
+        Logger.debug('<====', request.path, content_type, body)
 
     def makeTask(self, request):
         Logger.debug('====>', request.path)
@@ -50,58 +43,23 @@ class ServerHttpProtocol(BasicHttpProtocol):
             mo = Router.onMessage(request)
             if isinstance(mo, defer.Deferred):
                 mo.addBoth(self.__defer_callback, request)
-            elif request._disconnected:
+                return
+
+            if request._disconnected:
                 Logger.info('<====', request.path, 'connection lost')
-            else:
-                if isinstance(mo, JsonResult):
-                    body, content_type = str(mo), 'application/json; charset=utf-8'
-                elif isinstance(mo, XmlResult):
-                    body, content_type = str(mo), 'text/xml; charset=utf-8'
-                elif isinstance(mo, HtmlResult):
-                    body, content_type = str(mo), 'text/html; charset=utf-8'
-                else:
-                    body, content_type = str(mo), 'text/plain; charset=utf-8'
-                request.setHeader('Access-Control-Allow-Origin', request.get_origin())
-                request.setHeader('Access-Control-Allow-Credentials', 'true')
-                request.setHeader('Content-Type', content_type)
-                request.setHeader('Content-Length', str(len(body)))
-                request.write(body)
-                request.finish()
-                Logger.debug('<====', request.path, repr(mo))
+                return
+
+            body, content_type = http_response(request, mo)
         except SystemException, e:
-            body = '{"error":500,"desc":"System Error"}'
-            request.setResponseCode(500)
-            request.setHeader('Content-Type', 'application/json; charset=utf-8')
-            request.setHeader('Content-Length', str(len(body)))
-            request.write(body)
-            request.finish()
-            Logger.debug('<====', request.path, 'json', body)
+            body, content_type = http_response_500(request)
         except NotFoundException, e:
-            body = '{"error":404,"desc":"Not Found"}'
-            request.setResponseCode(404)
-            request.setHeader('Content-Type', 'application/json; charset=utf-8')
-            request.setHeader('Content-Length', str(len(body)))
-            request.write(body)
-            request.finish()
-            Logger.debug('<====', request.path, 'json', body)
+            body, content_type = http_response_404(request)
         except ForbiddenException, e:
-            body = '{"error":403,"desc":"Forbidden Access"}'
-            request.setResponseCode(403)
-            request.setHeader('Content-Type', 'application/json; charset=utf-8')
-            request.setHeader('Content-Length', str(len(body)))
-            request.write(body)
-            request.finish()
-            Logger.debug('<====', request.path, 'json', body)
+            body, content_type = http_response_403(request)
         except Exception, e:
             Logger.exception()
-            body = '{"error":500,"desc":"System Error"}'
-            request.setHeader('Access-Control-Allow-Origin', request.get_origin())
-            request.setHeader('Access-Control-Allow-Credentials', 'true')
-            request.setHeader('Content-Type', 'application/json; charset=utf-8')
-            request.setHeader('Content-Length', str(len(body)))
-            request.write(body)
-            request.finish()
-            Logger.debug('<====', request.path, 'json', body)
+            body, content_type = http_response_500(request)
+        Logger.debug('<====', request.path, content_type, body)
 
 
 class ServerHttpFactory(BasicHttpFactory):

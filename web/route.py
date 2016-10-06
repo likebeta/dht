@@ -18,11 +18,11 @@ class Router(object):
         }
 
     def onMessage(self, request):
-        if request.method.lower() == 'post':
-            if request.path in self.json_path:
-                args = request.get_args()
-                Logger.debug(args)
-                return self.json_path[request.path](args, request)
+        # if request.method.lower() == 'post':
+        if request.path in self.json_path:
+            args = request.get_args()
+            Logger.debug(args)
+            return self.json_path[request.path](args, request)
 
         raise NotFoundException('Not Found')
 

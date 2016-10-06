@@ -13,6 +13,7 @@ from twisted.web import resource
 from twisted.python import logfile
 from util.tool import Time
 from util.log import Logger
+from util.response import http_response_500
 
 
 class BasicResource(static.File):
@@ -88,14 +89,8 @@ class BasicHttpProtocol(http.HTTPChannel):
             self.makeTask(request)
         except Exception, e:
             Logger.exception()
-            body = '{"error":500,"desc":"System Error"}'
-            self.setHeader('Access-Control-Allow-Origin', self.get_origin())
-            self.setHeader('Access-Control-Allow-Credentials', 'true')
-            self.setHeader('Content-Type', 'application/json; charset=utf-8')
-            self.setHeader('Content-Length', str(len(body)))
-            self.write(body)
-            self.finish()
-            Logger.debug('<====', self.request.path, 'json', body)
+            body, content_type = http_response_500(request)
+            Logger.debug('<====', request.path, content_type, body)
 
 
 class BasicHttpFactory(server.Site):
