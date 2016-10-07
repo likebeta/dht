@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Download 12 Torrents , Magnet - bt.yisilong.tk</title>
+    <meta name="keywords" content="12,Download 12,12 Torrent,12 Magnet"/>
+    <link type="image/x-icon" href="img/favicon.ico" rel="shortcut icon"/>
+    <meta name="viewport" content="width=device-width">
+    <script src="//cdn.css.net/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="//cdn.css.net/libs/font-awesome/4.2.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="//cdn.css.net/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen"/>
+    <link rel="stylesheet" href="css/reset.css"/>
+    <link rel="stylesheet" href="css/search.css"/>
+    <link rel="stylesheet" href="css/empty.css"/>
+    <script src="js/utils.js"></script>
+</head>
+<body>
+<div class="site-wrap">
+    <div id="header">
+        <div class="header-wrap">
+            <div class="header__search-wrap clearfix">
+                <a tabindex="-1" href="/" class="logo">
+                    <h3 class="header_logo">Free Torrent Search - bt.yisilong.tk</h3>
+                </a>
+                <div class="inSearch">
+                    <form id="searchFrom" style="background-color: #f7f7f7;">
+                        <input class="findAnswer" id="search" style="background-color: #f7f7f7;" type="text" value="12">
+                        <button class="findSubmit" style="cursor: pointer;"><i class="fa fa-search fa-lg"></i></button>
+                    </form>
+                </div>
+                <div id="openArea"></div>
+            </div>
+            <div class="linkbar zcm-wrap clearfix zcm-wrap--header" style="display: none;">
+                <span class="head-hot-keywords">
+                    <a style="color: #5cb85c" target="_blank" href="http://javfind.com/">
+                        <i class="fa fa-play-circle-o"></i> Jav Sex Tube
+                    </a>
+                    <a style="color: #f60" href="/tags"><i class="fa fa-tags"></i> TAG</a>
+                    <a href="/new"><i class="fa fa-history"></i> Recent torrents</a>
+                </span>
+                <span class="fr">
+                    <i class="fa fa-globe"></i> Language:
+                        <select class="language" autocomplete="off" onchange="changeLanguage(this.value)">
+                            <option value="en" selected="selected">English</option>
+                            <option value="ko">한국어</option>
+                            <option value="zh-Hant">繁體中文</option>
+                            <option value="zh-Hans">简体中文</option>
+                            <option value="ja">日本語</option>
+                        </select>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div id="bar-sort" style="display: none;">
+        <b>Recent</b>
+        <a href="/q?s=12&sort=hot">Hot</a>
+        <a href="/q?s=12&sort=size">Size</a>
+        <a href="/q?s=12&sort=lately">Download</a>
+    </div>
+    <div id="container" class="clearfix">
+        <div id="left_content">
+            <div class="nums">Related searches for "<strong>{{ info.keyword }}</strong>" About {{ Util.format_size(info.total) }} results</div>
+            <div id="search_Results">
+                <h2 class="seo_text">{{ info.keyword }} Torrent</h2>
+                <ul>
+                    {% for item in info.list %}
+                    <li class="results">
+                        <h2>
+                            {% if False %}
+                            <a title="{{ item.name }}" target="_blank" href="/d/{{ item.id }}">
+                            {% endif %}
+                                {{ item.name }}
+                            {% if False %}
+                            </a>
+                            {% endif %}
+                        </h2>
+                        <div class="resultsContent">
+                            <ul>
+                            {% if item.files %}
+                                {% for f in item.files[:3] %}
+                                <li>
+                                    <i class="fa fa-file-video-o"></i> {{ f.path }}
+                                    <span style="color:#999">{{ Util.sizeof_fmt(f.length) }}</span>
+                                </li>
+                                {% endfor %}
+                                {% if item.files | length > 3 %}
+                                    <li>....</li>
+                                {% endif %}
+                            {% else %}
+                                <li>
+                                    <i class="fa fa-file-video-o"></i> {{ item.name }}
+                                    <span style="color:#999">{{ Util.sizeof_fmt(item.length) }}</span>
+                                </li>
+                            {% endif %}
+                            </ul>
+                        </div>
+                        <p class="resultsIntroduction">
+                            <span>Files：</span><label>{{ item.files | length or 1}}</label>
+                            <span>Size：</span><label>{{ Util.sizeof_fmt(item.length) }}</label>
+                            <span>Hot：</span><label>{{ item.hit }}</label>
+                            <span>Create Time：</span><label> {{ Util.calc_days(item.create_time) }} days</label>
+                            <span class="downLink">
+                                {% set magnet_link =  item.info_hash | upper + "&dn=" + item.name | urlencode %}
+                                <a rel="nofollow" href="magnet:?xt=urn:btih:{{ magnet_link }}"><i class="fa fa-magnet"></i> Magnet</a>
+                                <a rel="nofollow" data-clipboard-text="magnet:?xt=urn:btih:{{ magnet_link }}" class="clip_button"
+                                   href="javascript:void(0)">
+                                    <i class="fa fa-paper-plane-o"></i> Copy
+                                </a>
+                            </span>
+                        </p>
+                    </li>
+                    {% endfor %}
+                    <li class="b_ans" style="padding: 10px 0 10px 10px;">
+                        <div class="b_rs"></div>
+                    </li>
+                </ul>
+            </div>
+            <div id="find_ipt">
+                <div id="div1">
+                    <ul id="nextPage">
+                    {% if info.pages.prev_btn %}
+                        <li class="lastPage"><a href="/q?s={{ info.keyword|urlencode }}&p={{ info.pages.page - 1 }}"></a></li>
+                    {% endif %}
+                    {% for page in info.pages.pages %}
+                        {% if page == '...' %}
+                        <li class='otherPage'><a>...</a></li>
+                        {% elif page == info.pages.page %}
+                        <li class='nowPage'><a>{{ page }}</a></li>
+                        {% else %}
+                        <li class="otherPage"><a href="/q?s={{ info.keyword|urlencode }}&p={{ page }}">{{ page }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if info.pages.next_btn %}
+                        <li class="nextPage"><a href="/q?s={{ info.keyword|urlencode }}&p={{ info.pages.page + 1 }}"></a></li>
+                    {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="right_content" style="display: none;">
+            <div class="searchRelated">
+                <h3>Related Search</h3>
+                <ul class="ul1">
+                </ul>
+            </div>
+            <div class="hotSearch" style="margin-bottom: 20px;">
+                <h3>Hot Search</h3>
+                <ul class="ul1">
+                </ul>
+            </div>
+            <div class="hotSearch" style="margin-bottom: 20px;">
+                <h3>Other Search</h3>
+                <ul class="ul1">
+                </ul>
+            </div>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+    <ul id="toolBar" class="toolBar-wrap" style="bottom:50px;left:750px;">
+        <li>
+            <a id="gotopTool" onclick="$('html,body').animate({scrollTop: '0px'}, 800);" class="gotop barBox"
+               href="javascript:void(0);" title="回到顶部 ">
+                <i class="fa fa-arrow-circle-up"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+<div class="footer">
+    <div class="footer-wrap">
+        <span class="copyright">Copyright © 2016 <strong>bt.yisilong.tk</strong>. All rights reserved.</span>
+        <span class="copyright">
+            contact us <a href="mailto:xxx@x.com" style="color: #999;"><span class="__cf_email__">xxx@x.com</span></a>
+        </span>
+    </div>
+</div>
+<script src="//cdn.css.net/libs/zeroclipboard/2.2.0/ZeroClipboard.min.js"></script>
+<script src="//cdn.css.net/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+<script src="//cdn.css.net/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+<link rel="stylesheet" href="//cdn.css.net/libs/sweetalert/1.1.3/sweetalert.min.css"/>
+<script type="text/javascript">
+    $(function () {
+        $('.results').hover(function () {
+            $(this).addClass('highlight')
+        }, function () {
+            $(this).removeClass('highlight')
+        });
+        $('.qrcode').fancybox({
+            helpers: {
+                title: {
+                    type: 'float'
+                }
+            }
+        });
+    });
+    $('#searchFrom').submit(function (e) {
+        e.preventDefault();
+        var kw = $('.findAnswer').val();
+        if (!kw) {
+            $('.findAnswer').focus();
+            return false;
+        }
+        searchLog(kw);
+        window.location = '/q?s=' + encodeURIComponent(kw);
+//        $.cookie.set("kw", encodeURIComponent(kw));
+        return false;
+    });
+    $(window).bind("scroll", function () {
+        var scrollTop = $(window).scrollTop();
+        if (scrollTop > 100) {
+            $("#toolBar").show();
+        } else {
+            $("#toolBar").hide();
+        }
+    });
+    function searchLog(keyword) {
+//        $.ajax({
+//            cache: false,
+//            type: "GET",
+//            url: "/search-log",
+//            data: {wd: keyword}
+//        });
+    }
+
+    var clip = new ZeroClipboard($(".clip_button"));
+
+    clip.on("ready", function () {
+        this.on("aftercopy", function (event) {
+            showCopyOk();
+        });
+        this.on("copy", function (event) {
+        })
+    });
+    clip.on("error", function (event) {
+        ZeroClipboard.destroy();
+    });
+    function showCopyOk() {
+        swal("Good job!", "Copied successfully!", "success");
+    }
+    function changeLanguage(lang) {
+        window.location = $("link[hreflang=" + lang + "]").attr('href');
+    }
+    if (self != top) {
+        top.location = self.location;
+    }
+</script>
+</body>
+</html>

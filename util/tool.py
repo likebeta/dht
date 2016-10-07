@@ -207,3 +207,23 @@ class Time(object):
     def month_days(cls, year, month):
         _, days = calendar.monthrange(year, month)
         return days
+
+
+class Util(object):
+    @classmethod
+    def sizeof_fmt(cls, num, suffix='B'):
+        for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+            if abs(num) < 1024.0:
+                return "%3.2f %s%s" % (num, unit, suffix)
+            num /= 1024.0
+        return "%.2f %s%s" % (num, 'Y', suffix)
+
+    @classmethod
+    def format_size(cls, sz):
+        return format(sz, ',')
+
+    @classmethod
+    def calc_days(cls, ts, now_ts=None):
+        if now_ts is None:
+            now_ts = int(time.time())
+        return (now_ts - ts) / 86400 + 1

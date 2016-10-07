@@ -35,12 +35,13 @@ def inset_data(path):
         mt['create_time'] = datetime.datetime.fromtimestamp(mt['create_time'])
         mt['info_hash'] = os.path.basename(path)
         mt['name'] = mt['name'].encode('utf-8')
+        mt['hit'] = mt.get('hit', 1)
         files = mt.get('files')
         if files:
             files = json.dumps(files, separators=(',', ':'))
 
-        sql_str = 'INSERT INTO bt(info_hash,name,length,create_time,files) VALUES(%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE hit=hit+1;'
-        sql_arg_list = (mt['info_hash'], mt['name'], mt['length'], str(mt['create_time']), files)
+        sql_str = 'INSERT INTO bt(info_hash,name,length,hit,create_time,files) VALUES(%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE hit=hit+%s;'
+        sql_arg_list = (mt['info_hash'], mt['name'], mt['length'], mt['hit'], str(mt['create_time']), files, mt['hit'])
         d = DbMySql.operation('dht', sql_str, *sql_arg_list)
         d.addBoth(result_callback, sql_str, sql_arg_list)
 

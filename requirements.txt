@@ -4,3 +4,4 @@ hyperloglog
 pygeoip
 service_identity
 pymysql
+Jinja2
