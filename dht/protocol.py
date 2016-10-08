@@ -281,10 +281,15 @@ class TcpClientProtocol(Protocol):
             self.on_ext_metadata(data[1:])
 
     def on_ext_handshake(self, data):
-        info = bencode.bdecode(data)
-        # self.metadata_size = info['metadata_size']
-        self.ut_metadata = info['m']['ut_metadata']
-        self.send_ext_metadata(0)
+        try:
+            info = bencode.bdecode(data)
+            # self.metadata_size = info['metadata_size']
+            self.ut_metadata = info['m']['ut_metadata']
+            self.send_ext_metadata(0)
+        except:
+            Logger.warn(self.hex_hash, 'error ext handshake')
+            self.stop()
+            return
 
     def on_ext_metadata(self, data):
         sep = data.index('ee') + 2
