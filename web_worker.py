@@ -35,7 +35,7 @@ class ServerHttpProtocol(BasicHttpProtocol):
             body, content_type = http_response_500(request)
         else:
             body, content_type = http_response(request, result)
-        Logger.debug('<====', request.path, content_type, body)
+        Logger.debug('<====', request.path, content_type, repr(body))
 
     def makeTask(self, request):
         Logger.debug('====>', request.path)
@@ -59,7 +59,7 @@ class ServerHttpProtocol(BasicHttpProtocol):
         except Exception, e:
             Logger.exception()
             body, content_type = http_response_500(request)
-        Logger.debug('<====', request.path, content_type, body)
+        Logger.debug('<====', request.path, content_type, repr(body))
 
 
 class ServerHttpFactory(BasicHttpFactory):
@@ -75,5 +75,5 @@ if __name__ == "__main__":
     Logger.open_std_log()
     DbMySql.connect('search', setting.search_db_info)
     # reactor.listenTCP(8888, ServerHttpFactory(), interface='127.0.0.1')
-    reactor.listenTCP(8888, ServerHttpFactory(setting.log_path, setting.webroot))
+    reactor.listenTCP(8888, ServerHttpFactory(setting.web_log_path, setting.webroot))
     reactor.run()

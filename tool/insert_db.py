@@ -30,9 +30,13 @@ def result_callback(result, sql_str, sql_arg_list):
 
 def inset_data(path):
     with open(path) as f:
+        Logger.debug('start process', path)
         data = f.read()
         mt = json.loads(data)
-        mt['create_time'] = datetime.datetime.fromtimestamp(mt['create_time'])
+        if 'create_time' in mt:
+            mt['create_time'] = datetime.datetime.fromtimestamp(mt['create_time'])
+        else:
+            mt['create_time'] = datetime.datetime.fromtimestamp(mt['create_ts'])
         mt['info_hash'] = os.path.basename(path)
         mt['name'] = mt['name'].encode('utf-8')
         mt['hit'] = mt.get('hit', 1)

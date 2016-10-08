@@ -90,7 +90,7 @@ class BasicHttpProtocol(http.HTTPChannel):
         except Exception, e:
             Logger.exception()
             body, content_type = http_response_500(request)
-            Logger.debug('<====', request.path, content_type, body)
+            Logger.debug('<====', request.path, content_type, repr(body))
 
 
 class BasicHttpFactory(server.Site):

@@ -20,5 +20,5 @@ search_db_info = {
     'port': 9306
 }
 
-webroot = '/tmp/bt/web/static'
-log_path = '/tmp/bt/web.log'
+webroot = '/home/dht/dht/web/static'
+web_log_path = '/home/dht/log/web.log'
