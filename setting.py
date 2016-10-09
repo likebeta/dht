@@ -20,6 +20,6 @@ search_db_info = {
     'port': 9306
 }
 
-webroot = '/home/dht/dht/web/static'
-web_log_path = '/home/dht/log/web.log'
-web_port = 8888
+webroot = '/home/ysl/dht/web/static'
+web_log_path = '/home/ysl/log/web.log'
+web_port = 8889

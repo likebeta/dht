@@ -3,8 +3,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <title>Download {{ info.keyword }} Torrents , Magnet - bt.yisilong.tk</title>
-    <meta name="keywords" content="{{ info.keyword }},Download {{ info.keyword }},{{ info.keyword }} Torrent,{{ info.keyword }} Magnet"/>
+    <title>Download {{ info.name }} Torrent - bt.yisilong.tk</title>
+    <meta name="keywords" content="{{ info.name }},torrent,magnet,download"/>
     <link type="image/x-icon" href="img/favicon.ico" rel="shortcut icon"/>
     <meta name="viewport" content="width=device-width">
     <script src="//cdn.css.net/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="css/empty.css"/>
     <script src="js/utils.js"></script>
 </head>
-{% set encode_keyword = info.keyword|urlencode %}
 <body>
 <div class="site-wrap">
     <div id="header">
@@ -26,7 +25,8 @@
                 </a>
                 <div class="inSearch">
                     <form id="searchFrom" style="background-color: #f7f7f7;">
-                        <input class="findAnswer" id="search" placeholder="Search" style="background-color: #f7f7f7;" type="text" value="{{ info.keyword }}">
+                        <input class="findAnswer" id="search" placeholder="Search" style="background-color: #f7f7f7;"
+                               type="text" value="{{ info.keyword }}">
                         <button class="findSubmit" style="cursor: pointer;"><i class="fa fa-search fa-lg"></i></button>
                     </form>
                 </div>
@@ -53,107 +53,114 @@
             </div>
         </div>
     </div>
-    <div id="bar-sort" style="display: none;">
-        <b>Recent</b>
-        <a href="/q?s={{ encode_keyword }}&sort=hot">Hot</a>
-        <a href="/q?s={{ encode_keyword }}&sort=size">Size</a>
-        <a href="/q?s={{ encode_keyword }}&sort=lately">Download</a>
-    </div>
     <div id="container" class="clearfix">
-        <div id="left_content">
-            <div class="nums">Related searches for "<strong>{{ info.keyword }}</strong>" About {{ Util.format_size(info.total) }} results</div>
-            <div id="search_Results">
-                <h2 class="seo_text">{{ info.keyword }} Torrent</h2>
-                <ul>
-                    {% for item in info.list %}
-                    <li class="results">
-                        <h2>
-                            <a title="{{ item.name }}" target="_blank" href="/d?i={{ item.id }}&s={{ encode_keyword }}">
-                                {{ Util.highlight_words(item.name, info.keyword) }}
-                            </a>
-                        </h2>
-                        <div class="resultsContent">
-                            <ul>
-                            {% if item.files %}
-                                {% for f in item.files[:3] %}
-                                <li>
-                                    <i class="fa fa-file-video-o"></i> {{ f.path }}
-                                    <span style="color:#999">{{ Util.sizeof_fmt(f.length) }}</span>
-                                </li>
-                                {% endfor %}
-                                {% if item.files | length > 3 %}
-                                    <li>....</li>
-                                {% endif %}
-                            {% else %}
-                                <li>
-                                    <i class="fa fa-file-video-o"></i> {{ item.name }}
-                                    <span style="color:#999">{{ Util.sizeof_fmt(item.length) }}</span>
-                                </li>
-                            {% endif %}
-                            </ul>
+        <div id="middleMiddle" class="lang_middleMiddle_en">
+            <div id="fileIntrodution">
+                <div class="H2Content">
+                    <div class="clearfix">
+                        <table style="float:left;">
+                            <tbody>
+                            <tr>
+                                <th class="col-lg-2">AddTime</th>
+                                <td>{{ Util.format_ts(info.create_time) }}</td>
+                            </tr>
+                            <tr>
+                                <th class="col-lg-2">Updated</th>
+                                <td>{{ Util.format_ts(info.access_ts) }}</td>
+                            </tr>
+                            <tr>
+                                <th class="col-lg-2">Size</th>
+                                <td>{{ Util.sizeof_fmt(info.length) }}</td>
+                            </tr>
+                            <tr>
+                                <th class="col-lg-2">Hot</th>
+                                <td>{{ info.hit }}</td>
+                            </tr>
+                            <tr>
+                                <th class="col-lg-2">Files</th>
+                                <td>{{ info.files | length or 1}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="qrcode">
                         </div>
-                        <p class="resultsIntroduction">
-                            <span>Files：</span><label>{{ item.files | length or 1}}</label>
-                            <span>Size：</span><label>{{ Util.sizeof_fmt(item.length) }}</label>
-                            <span>Hot：</span><label>{{ item.hit }}</label>
-                            <span>Create Time：</span><label> {{ Util.calc_days(item.create_time) }} days</label>
-                            <span class="downLink">
-                            {% set magnet_link = "magnet:?xt=urn:btih:" + info.info_hash | upper %}
-                            {% set magnet_link_dn = magnet_link + "&dn=" + info.name | urlencode %}
-                                <a rel="nofollow" href="{{ magnet_link_dn }}"><i class="fa fa-magnet"></i> Magnet</a>
-                                <a rel="nofollow" data-clipboard-text="{{ magnet_link_dn }}" class="clip_button"
-                                   href="javascript:void(0)">
-                                    <i class="fa fa-paper-plane-o"></i> Copy
-                                </a>
-                            </span>
-                        </p>
-                    </li>
-                    {% endfor %}
-                    <li class="b_ans" style="padding: 10px 0 10px 10px;">
-                        <div class="b_rs"></div>
-                    </li>
-                </ul>
+                    </div>
+                    {% set magnet_link = "magnet:?xt=urn:btih:" + info.info_hash | upper %}
+                    {% set magnet_link_dn = magnet_link + "&dn=" + info.name | urlencode %}
+                    <table>
+                        <tbody>
+                        <tr height=25>
+                            <th class="col-lg-2">Magnet</th>
+                            <td><i style="color: #999" class="fa fa-magnet"></i>
+                                <a rel="nofollow" target="_blank"
+                                   href="{{ magnet_link_dn }}">{{ magnet_link }}</a>
+                            </td>
+                        </tr>
+                        <tr height=35>
+                            <td colspan="2">
+                                <div class="downinfo" style="padding: 10px  20px;">
+                                    <a rel="nofollow" href="{{ magnet_link_dn }}" class="btn nodecor btn-info mgr_20">
+                                        <i class="fa fa-magnet"></i>&nbsp;&nbsp;MAGNET
+                                    </a>
+                                    <a target="_blank" href="javascript:void(0)" class="btn clip_button_error nodecor btn-success mgr_20">
+                                        <i class="fa fa-download"></i>&nbsp;&nbsp;TORRENT
+                                    </a>
+                                    <a href="javascript:void(0)" data-clipboard-text="{{ magnet_link_dn }}"
+                                       rel="nofollow" class="btn clip_button nodecor btn-warning mgr_20">
+                                        <i class="fa fa-paper-plane-o"></i>&nbsp;&nbsp;COPY LINK
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div id="find_ipt">
-                <div id="div1">
-                    <ul id="nextPage">
-                    {% if info.pages.prev_btn %}
-                        <li class="lastPage"><a href="/q?s={{ encode_keyworde }}&p={{ info.pages.page - 1 }}"></a></li>
-                    {% endif %}
-                    {% for page in info.pages.pages %}
-                        {% if page == '...' %}
-                        <li class='otherPage'><a>...</a></li>
-                        {% elif page == info.pages.page %}
-                        <li class='nowPage'><a>{{ page }}</a></li>
-                        {% else %}
-                        <li class="otherPage"><a href="/q?s={{ encode_keyword }}&p={{ page }}">{{ page }}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                    {% if info.pages.next_btn %}
-                        <li class="nextPage"><a href="/q?s={{ encode_keyword }}&p={{ info.pages.page + 1 }}"></a></li>
+            <div class="fileList">
+                <h2>File List</h2>
+                <div class="H2Content">
+                    <ul style="max-height:500px;overflow:auto;font-size:13px;overflow-x:hidden;">
+                    {% if info.files %}
+                        {% for f in info.files %}
+                        <li style="color:#999;width:680px;line-height:22px;padding-left:10px;">
+                            <i class="fa fa-file-excel-o"></i>
+                            <span style="color: #666; margin: 0 10px;">{{ f.path }}</span>
+                            <em>{{ Util.sizeof_fmt(f.length) }}</em>
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li style="color:#999;width:680px;line-height:22px;padding-left:10px;">
+                            <i class="fa fa-file-excel-o"></i>
+                            <span style="color: #666; margin: 0 10px;">{{ info.name }}</span>
+                            <em>{{ Util.sizeof_fmt(info.length) }}</em>
+                        </li>
                     {% endif %}
                     </ul>
                 </div>
             </div>
+            <div id="fileDownload">
+                <h2>Tips</h2>
+                <div class="H2Content" style="margin-left: 10px">
+                    <p style="color: #909090">We do not store any content of the torrent ,only gather and index the
+                        metadata such as file name ,file size, magnet link from the DHT network. We do not store torrent
+                        files and can not provide a download url, you can download the torrent file through the third
+                        party website or magenet to get the torrent contents. Please pay attention that we are not
+                        responsible for the authenticity and legality of the torrent files.</p>
+                </div>
+            </div>
         </div>
         <div id="right_content" style="display: none;">
-            <div class="searchRelated">
-                <h3>Related Search</h3>
-                <ul class="ul1">
-                </ul>
-            </div>
-            <div class="hotSearch" style="margin-bottom: 20px;">
+            <div class="hotSearch" style="margin-top: 20px;">
                 <h3>Hot Search</h3>
                 <ul class="ul1">
                 </ul>
             </div>
-            <div class="hotSearch" style="margin-bottom: 20px;">
+            <div class="hotSearch" style="margin-bottom: 20px;margin-top:20px;">
                 <h3>Other Search</h3>
                 <ul class="ul1">
                 </ul>
             </div>
         </div>
-        <div style="clear: both"></div>
     </div>
     <ul id="toolBar" class="toolBar-wrap" style="bottom:50px;left:750px;">
         <li>
@@ -237,6 +244,7 @@
     }
 
     on_copy('.clip_button', "Good job!", "Copied successfully!", "success");
+    on_copy('.clip_button_error', "Stop!", "We don't save torrent!", "error");
 
     function showCopyOk(title, desc, type) {
         swal(title, desc, type);

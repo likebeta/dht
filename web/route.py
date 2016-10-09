@@ -18,7 +18,8 @@ class Router(object):
         self.env = jinja2.Environment(loader=jinja2.PackageLoader('web', 'template'))
         self.json_path = {
             '/': self.index,
-            '/q': self.search
+            '/q': self.search,
+            '/d': self.detail
         }
 
     def onMessage(self, request):
@@ -28,6 +29,11 @@ class Router(object):
             return self.json_path[request.path](args, request)
 
         raise NotFoundException('Not Found')
+
+    @http_response_handle(response='html')
+    def rander_page(self, result, tpl_name):
+        tpl = self.env.get_template(tpl_name, globals={'Util': Util})
+        return tpl.render(info=result).encode('utf-8')
 
     @http_response_handle(response='html')
     def index(self, args, request):
@@ -44,13 +50,18 @@ class Router(object):
 
         if keyword:
             d = DbMySql.interaction('search', self.do_search, keyword, page, 10)
-            d.addCallback(self.rander_search_page)
+            d.addCallback(self.rander_page, 'search.html')
             return d
 
-    @http_response_handle(response='html')
-    def rander_search_page(self, result):
-        tpl = self.env.get_template('search.html', globals={'Util': Util})
-        return tpl.render(info=result).encode('utf-8')
+    def detail(self, args, request):
+        keyword = args.get('s')
+        tid = int(args.get('i', 0))
+        if tid <= 0:
+            tid = 1
+        if keyword:
+            d = DbMySql.interaction('search', self.do_detail, keyword, tid)
+            d.addCallback(self.rander_page, 'detail.html')
+            return d
 
     def do_search(self, tst, keyword, page, count):
         offset = (page - 1) * count
@@ -95,6 +106,27 @@ class Router(object):
         }
         info['pages'] = pages
         return info
+
+    def do_detail(self, tst, keyword, tid):
+        sql = "SELECT info_hash, name, length, hit, create_time, access_ts, files FROM search WHERE id=%s LIMIT 1;"
+        tst.execute(sql, (tid,))
+        result = tst.fetchall()
+        if not result:
+            raise NotFoundException('Not Found')
+
+        values = list(result[0])
+        fields = ('info_hash', 'name', 'length', 'hit', 'create_time', 'access_ts', 'files')
+        detail = dict(zip(fields, values))
+        if not detail['files']:
+            del detail['files']
+        else:
+            detail['files'] = json.loads(detail['files'])
+
+        try:
+            keyword = keyword.decode('utf-8')
+        except:
+            pass
+        return dict(keyword=keyword, **detail)
 
     def calc_pages(self, total, c_p):
         if total == 0 or c_p < 1 or c_p > total:

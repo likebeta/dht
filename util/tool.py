@@ -237,3 +237,7 @@ class Util(object):
         except:
             pass
         return s
+
+    @classmethod
+    def format_ts(cls, ts, fmt='%Y-%m-%d %X'):
+        return Time.timestamp_to_str(ts, fmt)
