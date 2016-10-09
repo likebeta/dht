@@ -39,11 +39,19 @@ class Router(object):
         page = int(args.get('p', 1))
         if page <= 0:
             page = 1
+        elif page > 100:
+            page = 100
 
         if keyword:
-            return DbMySql.interaction('search', self.do_search, keyword, page, 10)
+            d = DbMySql.interaction('search', self.do_search, keyword, page, 10)
+            d.addCallback(self.rander_search_page)
+            return d
 
     @http_response_handle(response='html')
+    def rander_search_page(self, result):
+        tpl = self.env.get_template('search.html', globals={'Util': Util})
+        return tpl.render(info=result).encode('utf-8')
+
     def do_search(self, tst, keyword, page, count):
         offset = (page - 1) * count
         sql = "SELECT id, info_hash, name, length, hit, create_time, access_ts, files FROM search WHERE MATCH(%s) "
@@ -69,12 +77,14 @@ class Router(object):
 
         info = {
             'list': result,
-            'total': int(tmp['total']),
+            'total': int(tmp['total_found']),
             'keyword': keyword,
         }
         total_pages = info['total'] / count
         if info['total'] % count != 0:
             total_pages += 1
+        if total_pages > 100:
+            total_pages = 100
         prev_btn, rc_show, next_btn = self.calc_pages(total_pages, page)
         pages = {
             'total': total_pages,
@@ -84,9 +94,7 @@ class Router(object):
             'pages': rc_show
         }
         info['pages'] = pages
-
-        tpl = self.env.get_template('search.html', globals={'Util': Util})
-        return tpl.render(info=info).encode('utf-8')
+        return info
 
     def calc_pages(self, total, c_p):
         if total == 0 or c_p < 1 or c_p > total:

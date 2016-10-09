@@ -11,7 +11,6 @@ import datetime
 from util.log import Logger
 from util.db_mysql import DbMySql
 from twisted.internet import reactor
-from twisted.python.failure import Failure
 
 
 def walk_dir(root, func):
@@ -23,9 +22,8 @@ def walk_dir(root, func):
             func(path)
 
 
-def result_callback(result, sql_str, sql_arg_list):
-    if isinstance(result, Failure):
-        Logger.error(sql_str, sql_arg_list, result.getErrorMessage())
+def error_callback(result, info_hash):
+    Logger.error('insert error:', info_hash, result.getErrorMessage())
 
 
 def inset_data(path):
@@ -47,7 +45,7 @@ def inset_data(path):
         sql_str = 'INSERT INTO bt(info_hash,name,length,hit,create_time,files) VALUES(%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE hit=hit+%s;'
         sql_arg_list = (mt['info_hash'], mt['name'], mt['length'], mt['hit'], str(mt['create_time']), files, mt['hit'])
         d = DbMySql.operation('dht', sql_str, *sql_arg_list)
-        d.addBoth(result_callback, sql_str, sql_arg_list)
+        d.addErrback(error_callback, mt['info_hash'])
 
 
 if __name__ == '__main__':

@@ -7,7 +7,6 @@
 import setting
 from twisted.internet import defer
 from twisted.internet import reactor
-from twisted.python.failure import Failure
 from util.log import Logger
 from util.response import http_response
 from util.response import http_response_500
@@ -30,11 +29,15 @@ class ServerHttpProtocol(BasicHttpProtocol):
             Logger.info('<====', request.path, 'connection lost')
             return
 
-        if isinstance(result, Failure):
-            Logger.exception()
-            body, content_type = http_response_500(request)
-        else:
-            body, content_type = http_response(request, result)
+        body, content_type = http_response(request, result)
+        Logger.debug('<====', request.path, content_type, repr(body))
+
+    def __defer_errback(self, result, request):
+        if request._disconnected:
+            Logger.info('<====', request.path, 'connection lost')
+            return
+        Logger.exception()
+        body, content_type = http_response_500(request)
         Logger.debug('<====', request.path, content_type, repr(body))
 
     def makeTask(self, request):
@@ -42,7 +45,8 @@ class ServerHttpProtocol(BasicHttpProtocol):
         try:
             mo = Router.onMessage(request)
             if isinstance(mo, defer.Deferred):
-                mo.addBoth(self.__defer_callback, request)
+                mo.addCallback(self.__defer_callback, request)
+                mo.addErrback(self.__defer_errback, request)
                 return
 
             if request._disconnected:
