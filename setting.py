@@ -22,3 +22,4 @@ search_db_info = {
 
 webroot = '/home/dht/dht/web/static'
 web_log_path = '/home/dht/log/web.log'
+web_port = 8888

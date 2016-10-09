@@ -4,6 +4,7 @@
 # Author: likebeta <ixxoo.me@gmail.com>
 # Create: 2014-11-07
 
+import re
 import time
 import datetime
 import calendar
@@ -227,3 +228,12 @@ class Util(object):
         if now_ts is None:
             now_ts = int(time.time())
         return (now_ts - ts) / 86400 + 1
+
+    @classmethod
+    def highlight_words(cls, s, *words):
+        try:
+            for word in words:
+                s = re.sub(word, '<strong>%s</strong>' % word, s)
+        except:
+            pass
+        return s

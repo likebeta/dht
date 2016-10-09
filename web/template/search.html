@@ -71,7 +71,7 @@
                             {% if False %}
                             <a title="{{ item.name }}" target="_blank" href="/d/{{ item.id }}">
                             {% endif %}
-                                {{ item.name }}
+                                {{ Util.highlight_words(item.name, info.keyword) }}
                             {% if False %}
                             </a>
                             {% endif %}
