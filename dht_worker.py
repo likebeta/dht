@@ -6,6 +6,7 @@
 
 import json
 # import bencode
+import setting
 import hyperloglog
 from util.log import Logger
 from dht.kademlia.server import DHTServer
@@ -18,12 +19,13 @@ from collections import defaultdict
 
 
 class DHTWorker(object):
-    def __init__(self):
+    def __init__(self, save_path):
         self.hp = hyperloglog.HyperLogLog(0.01)
         self.hp_len = 0
         self.bt_hit = defaultdict(int)
         self.dl_ing = set()
         self.dl_ed = set()
+        self.save_path = save_path
 
     def on_metadata(self, info_hash, ip, port, peer_id):
         """
@@ -38,7 +40,7 @@ class DHTWorker(object):
         hex_hash = info_hash.encode('hex')
         if info_hash not in self.dl_ed:
             if info_hash not in self.dl_ing:
-                if os.path.exists('metadata/%s' % hex_hash):
+                if os.path.exists('%s/%s' % (self.save_path, hex_hash)):
                     self.dl_ed.add(info_hash)
                 else:
                     self.dl_ing.add(info_hash)
@@ -57,7 +59,7 @@ class DHTWorker(object):
 
     def update_hit(self, info_hash, hex_hash):
         try:
-            with open('metadata/%s' % hex_hash, 'r+') as f:
+            with open('%s/%s' % (self.save_path, hex_hash), 'r+') as f:
                 data = f.read()
                 info = json.loads(data)
                 if 'hit' in info:
@@ -80,7 +82,7 @@ class DHTWorker(object):
         if info:
             info['hit'], self.bt_hit[info_hash] = self.bt_hit[info_hash], 0
             data_json = json.dumps(info, separators=(',', ':'))
-            with open('metadata/%s' % hex_hash, 'w') as fp:
+            with open('%s/%s' % (self.save_path, hex_hash), 'w') as fp:
                 fp.write(data_json)
             self.dl_ed.add(info_hash)
 
@@ -92,11 +94,11 @@ class DHTWorker(object):
 if __name__ == '__main__':
     import os
 
-    if not os.path.exists('metadata'):
-        os.makedirs('metadata')
+    if not os.path.exists(setting.dht_metadata_path):
+        os.makedirs(setting.dht_metadata_path)
     Logger.show_task_id(False)
     Logger.open_std_log()
-    worker = DHTWorker()
+    worker = DHTWorker(setting.dht_metadata_path)
     for i in range(NODE_COUNT):
         reactor.listenUDP(6882 + i, DHTServer(worker))
         Logger.info('listen on udp port', 6882 + i)

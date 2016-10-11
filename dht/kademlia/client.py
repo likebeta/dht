@@ -9,6 +9,7 @@ import const
 import utils
 import collections
 from rpc import KRPC
+from util.log import Logger
 from twisted.internet import reactor
 from twisted.application import internet
 
@@ -84,6 +85,7 @@ class DHTClient(KRPC):
 
         def callback(ip, port):
             """解析成功后, 开始发送find_node"""
+            reactor.listenUDP(0, (ip, port))
             self.find_node((self.nid, (ip, port)))
 
         def errback(failure, host, port):

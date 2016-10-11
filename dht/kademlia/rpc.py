@@ -6,7 +6,10 @@
 
 import socket
 import bencode
+from util.log import Logger
 from twisted.internet import protocol
+
+DEBUG = False
 
 
 class KRPC(protocol.DatagramProtocol):
@@ -32,19 +35,25 @@ class KRPC(protocol.DatagramProtocol):
         """
         try:
             msg = bencode.bdecode(data)
+            if DEBUG:
+                Logger.debug('==== RECV UDP:', msg)
             self.actionSwitch[msg["y"]](msg, address)
         except(bencode.BTL.BTFailure, KeyError):
-            pass
+            if DEBUG:
+                Logger.exception()
 
     def sendMsg(self, msg, address):
         """
         发送数据
         """
         try:
+            if DEBUG:
+                Logger.debug('==== SEND UDP:', msg)
             data = bencode.bencode(msg)
             self.transport.write(data, address)
         except socket.error:
-            pass
+            if DEBUG:
+                Logger.exception()
 
     def send_query(self, msg, address):
         """发送请求类型数据"""

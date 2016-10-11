@@ -63,12 +63,12 @@ class TcpClientProtocol(Protocol):
                     data, self._data = self._data[4:4 + length], self._data[4 + length:]
                     if length == 0:
                         if DEBUG:
-                            Logger.debug(self.hex_hash, '==== RECV: keep alive')
+                            Logger.debug(self.hex_hash, '==== RECV TCP: keep alive')
                         self.on_keep_alive()
                     else:
                         cmd, data = ord(data[0]), data[1:]
                         if DEBUG:
-                            Logger.debug(self.hex_hash, '==== RECV:', cmd, len(data))
+                            Logger.debug(self.hex_hash, '==== RECV TCP:', cmd, len(data))
                         self.on_message(cmd, data)
         except Exception, e:
             Logger.exception(self.hex_hash, repr(data))
@@ -79,7 +79,7 @@ class TcpClientProtocol(Protocol):
             try:
                 self.transport.write(data)
                 if DEBUG:
-                    Logger.debug(self.hex_hash, '==== SEND:', repr(data))
+                    Logger.debug(self.hex_hash, '==== SEND TCP:', repr(data))
                 return True
             except Exception, e:
                 Logger.exception(self.info_hash)
