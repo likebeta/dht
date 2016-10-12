@@ -17,7 +17,7 @@ class Parser(object):
             try:
                 torrent = bencode.bdecode(torrent)
             except:
-                return None
+                return None, None
         info = {}
         try:
             info['create_time'] = int(torrent['creation date'])
@@ -25,8 +25,8 @@ class Parser(object):
             info['create_time'] = int(time.time())
 
         encoding = torrent.get('encoding', 'utf8')
-        if torrent.get('announce'):
-            info['announce'] = cls.__decode_utf8(encoding, torrent, 'announce')
+        # if torrent.get('announce'):
+        #     info['announce'] = cls.__decode_utf8(encoding, torrent, 'announce')
 
         # if 'comment' in torrent:
         #     info['comment'] = cls.__decode_utf8(encoding, torrent, 'comment')[:200]
@@ -62,7 +62,7 @@ class Parser(object):
         # info['data_hash'] = hashlib.md5(metadata['pieces']).hexdigest()
         # if 'profiles' in metadata:
         #     info['profiles'] = metadata['profiles']
-        return info
+        return info, metadata
 
     @classmethod
     def __decode(cls, encoding, s):

@@ -98,8 +98,8 @@
                             <span>Hot：</span><label>{{ item.hit }}</label>
                             <span>Create Time：</span><label> {{ Util.calc_days(item.create_time) }} days</label>
                             <span class="downLink">
-                            {% set magnet_link = "magnet:?xt=urn:btih:" + info.info_hash | upper %}
-                            {% set magnet_link_dn = magnet_link + "&dn=" + info.name | urlencode %}
+                            {% set magnet_link = "magnet:?xt=urn:btih:" + item.info_hash | upper %}
+                            {% set magnet_link_dn = magnet_link + "&dn=" + item.name | urlencode %}
                                 <a rel="nofollow" href="{{ magnet_link_dn }}"><i class="fa fa-magnet"></i> Magnet</a>
                                 <a rel="nofollow" data-clipboard-text="{{ magnet_link_dn }}" class="clip_button"
                                    href="javascript:void(0)">
@@ -118,7 +118,7 @@
                 <div id="div1">
                     <ul id="nextPage">
                     {% if info.pages.prev_btn %}
-                        <li class="lastPage"><a href="/q?s={{ encode_keyworde }}&p={{ info.pages.page - 1 }}"></a></li>
+                        <li class="lastPage"><a href="/q?s={{ encode_keyword }}&p={{ info.pages.page - 1 }}"></a></li>
                     {% endif %}
                     {% for page in info.pages.pages %}
                         {% if page == '...' %}

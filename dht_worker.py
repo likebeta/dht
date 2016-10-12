@@ -78,7 +78,7 @@ class DHTWorker(object):
     def on_success_download(self, metadata, info_hash, hex_hash):
         Logger.info(hex_hash, 'success', metadata['name'])
         self.dl_ing.discard(info_hash)
-        info = Parser.parse_torrent(metadata)
+        info, _ = Parser.parse_torrent(metadata)
         if info:
             info['hit'], self.bt_hit[info_hash] = self.bt_hit[info_hash], 0
             data_json = json.dumps(info, separators=(',', ':'))
