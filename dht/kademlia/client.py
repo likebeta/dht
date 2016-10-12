@@ -85,11 +85,12 @@ class DHTClient(KRPC):
 
         def callback(ip, port):
             """解析成功后, 开始发送find_node"""
-            reactor.listenUDP(0, (ip, port))
+            Logger.debug('callback', ip, host)
             self.find_node((self.nid, (ip, port)))
 
         def errback(failure, host, port):
             """解析失败, 再继续解析, 直到成功为止"""
+            Logger.debug('errback', failure, host, port)
             self.resolve(host, port)
 
         d = reactor.resolve(host)

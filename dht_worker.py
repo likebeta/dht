@@ -7,7 +7,7 @@
 import json
 # import bencode
 import setting
-import hyperloglog
+# import hyperloglog
 from util.log import Logger
 from dht.kademlia.server import DHTServer
 from dht.kademlia.const import NODE_COUNT
@@ -20,8 +20,8 @@ from collections import defaultdict
 
 class DHTWorker(object):
     def __init__(self, save_path):
-        self.hp = hyperloglog.HyperLogLog(0.01)
-        self.hp_len = 0
+        # self.hp = hyperloglog.HyperLogLog(0.01)
+        # self.hp_len = 0
         self.bt_hit = defaultdict(int)
         self.dl_ing = set()
         self.dl_ed = set()
