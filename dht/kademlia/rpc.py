@@ -9,7 +9,7 @@ import bencode
 from util.log import Logger
 from twisted.internet import protocol
 
-DEBUG = False
+DEBUG = True
 
 
 class KRPC(protocol.DatagramProtocol):
