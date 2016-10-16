@@ -5,3 +5,4 @@ pygeoip
 service_identity
 pymysql
 Jinja2
+pyquery
