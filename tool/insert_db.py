@@ -10,23 +10,26 @@ import json
 import datetime
 from util.log import Logger
 from util.db_mysql import DbMySql
+from twisted.internet import defer
 from twisted.internet import reactor
 
 
-def walk_dir(root, func):
+@defer.inlineCallbacks
+def walk_dir(root, func, *args):
     for lists in os.listdir(root):
         path = os.path.join(root, lists)
         if os.path.isdir(path):
-            walk_dir(path, func)
+            d = walk_dir(path, func, *args)
         else:
-            func(path)
+            d = func(path, *args)
+        yield d
 
 
 def error_callback(result, info_hash):
     Logger.error('insert error:', info_hash, result.getErrorMessage())
 
 
-def inset_data(path):
+def read_data(path, func, *args):
     with open(path) as f:
         Logger.debug('start process', path)
         data = f.read()
@@ -46,6 +49,26 @@ def inset_data(path):
         sql_arg_list = (mt['info_hash'], mt['name'], mt['length'], mt['hit'], str(mt['create_time']), files, mt['hit'])
         d = DbMySql.operation('dht', sql_str, *sql_arg_list)
         d.addErrback(error_callback, mt['info_hash'])
+        return func(d, *args)
+
+
+def insert_data(data, worker):
+    global defer_list
+    defer_list.append(data)
+    if len(defer_list) >= worker:
+        tmp = defer.DeferredList(defer_list, consumeErrors=True)
+        defer_list = []
+        return tmp
+
+
+@defer.inlineCallbacks
+def main(path, worker=5):
+    yield walk_dir(path, read_data, insert_data, worker)
+    global defer_list
+    if defer_list:
+        yield defer.DeferredList(defer_list, consumeErrors=True)
+        defer_list = []
+    reactor.stop()
 
 
 if __name__ == '__main__':
@@ -54,6 +77,6 @@ if __name__ == '__main__':
 
     info = dict(db='dht', user='root', passwd='359359', host='127.0.0.1', port=3306)
     DbMySql.connect('dht', info)
-
-    reactor.callWhenRunning(walk_dir, sys.argv[1], inset_data)
+    defer_list = []
+    reactor.callWhenRunning(main, sys.argv[1], int(sys.argv[2]))
     reactor.run()
