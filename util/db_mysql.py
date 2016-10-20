@@ -16,29 +16,19 @@ class DbMySql(object):
         self.__CONN_MYSQL__ = {}
         warnings.filterwarnings('ignore')
 
-    def connect(self, alias_name, *args):
+    def connect(self, alias_name, info, min_pool=3, max_pool=5):
         if alias_name in self.__CONN_MYSQL__:
             return self.__CONN_MYSQL__[alias_name]
 
-        if len(args) == 1:
-            confDict = args[0]
-            db = str(confDict['db'])
-            host = str(confDict['host'])
-            port = int(confDict['port'])
-            user = str(confDict['user'])
-            passwd = str(confDict['passwd'])
-        elif len(args) == 5:
-            db = str(args[0])
-            host = str(args[1])
-            port = int(args[2])
-            user = str(args[3])
-            passwd = str(args[4])
-        else:
-            raise Exception('error args')
+        db = str(info['db'])
+        host = str(info['host'])
+        port = int(info['port'])
+        user = str(info['user'])
+        passwd = str(info['passwd'])
 
         Logger.debug('DbMySql.connect->', alias_name, db, user, passwd, host, port)
         conn = adbapi.ConnectionPool('pymysql', db=db, user=user, passwd=passwd, host=host, port=port, charset='utf8',
-                                     use_unicode=True, cp_reconnect=True)
+                                     use_unicode=True, cp_reconnect=True, cp_min=min_pool, cp_max=max_pool)
         Logger.debug('DbMySql.__init__->done', conn)
         self.__CONN_MYSQL__[alias_name] = conn
         return conn

@@ -45,8 +45,8 @@ def read_data(path, func, *args):
         if files:
             files = json.dumps(files, separators=(',', ':'))
 
-        sql_str = 'INSERT INTO bt(info_hash,name,length,hit,create_time,files) VALUES(%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE hit=hit+%s;'
-        sql_arg_list = (mt['info_hash'], mt['name'], mt['length'], mt['hit'], str(mt['create_time']), files, mt['hit'])
+        sql_str = 'INSERT INTO bt1(info_hash,name,length,hit,create_time,files) VALUES(%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE hit=hit+VALUES(hit);'
+        sql_arg_list = (mt['info_hash'], mt['name'], mt['length'], mt['hit'], str(mt['create_time']), files)
         d = DbMySql.operation('dht', sql_str, *sql_arg_list)
         d.addErrback(error_callback, mt['info_hash'])
         return func(d, *args)
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     Logger.show_task_id(False)
 
     info = dict(db='dht', user='root', passwd='359359', host='127.0.0.1', port=3306)
-    DbMySql.connect('dht', info)
+    DbMySql.connect('dht', info, 5, 20)
     defer_list = []
     reactor.callWhenRunning(main, sys.argv[1], int(sys.argv[2]))
     reactor.run()
