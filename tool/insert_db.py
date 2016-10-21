@@ -45,7 +45,7 @@ def read_data(path):
         if files:
             files = json.dumps(files, separators=(',', ':'))
 
-        sql_str = 'INSERT INTO bt1(info_hash,name,length,hit,create_time,files) VALUES(%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE hit=hit+VALUES(hit);'
+        sql_str = 'INSERT INTO bt(info_hash,name,length,hit,create_time,files) VALUES(%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE hit=hit+VALUES(hit);'
         sql_arg_list = (mt['info_hash'], mt['name'], mt['length'], mt['hit'], str(mt['create_time']), files)
         d = DbMySql.operation('dht', sql_str, *sql_arg_list)
         d.addErrback(error_callback, mt['info_hash'])
