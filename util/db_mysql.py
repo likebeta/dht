@@ -10,6 +10,8 @@ from twisted.internet.defer import returnValue
 from twisted.internet.defer import inlineCallbacks
 from util.log import Logger
 
+DEBUG = False
+
 
 class DbMySql(object):
     def __init__(self):
@@ -26,35 +28,43 @@ class DbMySql(object):
         user = str(info['user'])
         passwd = str(info['passwd'])
 
-        Logger.debug('DbMySql.connect->', alias_name, db, user, passwd, host, port)
+        if DEBUG:
+            Logger.info('DbMySql.connect->', alias_name, db, user, passwd, host, port)
         conn = adbapi.ConnectionPool('pymysql', db=db, user=user, passwd=passwd, host=host, port=port, charset='utf8',
                                      use_unicode=True, cp_reconnect=True, cp_min=min_pool, cp_max=max_pool)
-        Logger.debug('DbMySql.__init__->done', conn)
+        if DEBUG:
+            Logger.info('DbMySql.__init__->done', conn)
         self.__CONN_MYSQL__[alias_name] = conn
         return conn
 
     @inlineCallbacks
     def query(self, alias_name, sql_str, *sql_arg_list):
         pool = self.__CONN_MYSQL__[alias_name]
-        Logger.debug('mysql %s: ===>' % alias_name, sql_str, sql_arg_list)
+        if DEBUG:
+            Logger.debug('mysql %s: ===>' % alias_name, sql_str, sql_arg_list)
         result = yield pool.runQuery(sql_str, sql_arg_list)
-        Logger.debug('mysql %s: <===' % alias_name, sql_str, sql_arg_list, result)
+        if DEBUG:
+            Logger.debug('mysql %s: <===' % alias_name, sql_str, sql_arg_list, result)
         returnValue(result)
 
     @inlineCallbacks
     def operation(self, alias_name, sql_str, *sql_arg_list):
         pool = self.__CONN_MYSQL__[alias_name]
-        Logger.debug('mysql %s: ===>' % alias_name, sql_str, *sql_arg_list)
+        if DEBUG:
+            Logger.debug('mysql %s: ===>' % alias_name, sql_str, *sql_arg_list)
         result = yield pool.runOperation(sql_str, sql_arg_list)
-        Logger.debug('mysql %s: <===' % alias_name, sql_str, *sql_arg_list)
+        if DEBUG:
+            Logger.debug('mysql %s: <===' % alias_name, sql_str, *sql_arg_list)
         returnValue(result)
 
     @inlineCallbacks
     def interaction(self, alias_name, func, *args):
         pool = self.__CONN_MYSQL__[alias_name]
-        Logger.debug('mysql %s: ===>' % alias_name, *args)
+        if DEBUG:
+            Logger.debug('mysql %s: ===>' % alias_name, *args)
         result = yield pool.runInteraction(func, *args)
-        Logger.debug('mysql %s: <===' % alias_name, args, result)
+        if DEBUG:
+            Logger.debug('mysql %s: <===' % alias_name, args, result)
         returnValue(result)
 
 
