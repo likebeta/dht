@@ -7,6 +7,24 @@
 import json
 import functools
 
+default_content_type = 'text/plain'
+
+
+def set_default_content_type(content_type):
+    global default_content_type
+    default_content_type = content_type
+
+
+def get_default_result():
+    if default_content_type == 'json':
+        return JsonResult
+    elif default_content_type == 'html':
+        return HtmlResult
+    elif default_content_type == 'xml':
+        return XmlResult
+    elif default_content_type == 'text':
+        return TextResult
+
 
 class __Result(object):
     def __init__(self, result, header=None):
@@ -26,33 +44,26 @@ class __Result(object):
         return self.header
 
     def get_content_type(self):
-        return 'text/plain'
+        return default_content_type
 
     def __str__(self):
         return self.result
 
     def __repr__(self):
-        return 'text ' + self.__str__()
+        return '%s %s' % (self.get_content_type(), self.__str__())
 
 
 class XmlResult(__Result):
-    def __repr__(self):
-        return 'xml ' + self.__str__()
-
     def get_content_type(self):
         return 'text/xml'
 
 
 class TextResult(__Result):
-    """
-    plain text
-    """
+    def get_content_type(self):
+        return 'text/plain'
 
 
 class HtmlResult(__Result):
-    def __repr__(self):
-        return 'html ' + self.__str__()
-
     def get_content_type(self):
         return 'text/html'
 
@@ -62,9 +73,6 @@ class JsonResult(__Result):
         if isinstance(result, (tuple, list, dict)):
             result = json.dumps(result, separators=(',', ':'))
         super(JsonResult, self).__init__(result, header)
-
-    def __repr__(self):
-        return 'json ' + self.__str__()
 
     def get_content_type(self):
         return 'application/json'
@@ -81,8 +89,10 @@ def http_response_handle(response='json'):
                 return HtmlResult(result)
             elif response == 'xml':
                 return XmlResult(result)
-            else:
+            elif response == 'text':
                 return TextResult(result)
+            else:
+                return get_default_result()(result)
 
         return inner_decorator_func
 
@@ -95,7 +105,7 @@ def http_response(request, mo, code=None, content_type=None):
         try:
             content_type = mo.get_content_type()
         except:
-            content_type = 'text/plain'
+            content_type = default_content_type
 
     if code:
         request.setResponseCode(code)
@@ -120,4 +130,5 @@ def http_response_403(request):
     return http_response(request, '{"error":403,"desc":"Forbidden Access"}', 403, 'application/json')
 
 
-__all__ = ['XmlResult', 'JsonResult', 'TextResult', 'HtmlResult', 'http_response_handle']
+__all__ = ['XmlResult', 'JsonResult', 'TextResult', 'HtmlResult', 'http_response_handle', 'http_response_500',
+           'http_response_404', 'http_response_403']

@@ -69,7 +69,7 @@ if __name__ == '__main__':
     Logger.show_task_id(False)
 
     info = dict(db='dht', user='root', passwd='359359', host='127.0.0.1', port=3306)
-    DbMySql.connect('dht', info, 8, 8)
+    DbMySql.connect('dht', info, 10, 10)
     defer_list = []
     reactor.callWhenRunning(main, sys.argv[1], int(sys.argv[2]))
     reactor.run()
