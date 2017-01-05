@@ -11,11 +11,6 @@ from twisted.internet import reactor
 from twisted.python.failure import Failure
 
 
-def result_callback(result, sql_str, sql_arg_list):
-    if isinstance(result, Failure):
-        Logger.error(sql_str, sql_arg_list, result.getErrorMessage())
-
-
 @defer.inlineCallbacks
 def main():
     sql_str_list = (
@@ -45,6 +40,7 @@ def main():
 if __name__ == '__main__':
     Logger.open_std_log()
     Logger.show_task_id(False)
+    DbMySql.DEBUG = True
 
     info = dict(db='', user='root', passwd='359359', host='127.0.0.1', port=3306)
     DbMySql.connect('dht', info)
