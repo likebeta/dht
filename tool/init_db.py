@@ -27,20 +27,20 @@ def main():
         "`files` TEXT DEFAULT NULL)" +
         "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;"
     )
-    for sql_str in sql_str_list:
-        result = yield DbMySql.operation('dht', sql_str)
-        if isinstance(result, Failure):
-            Logger.debug(sql_str, result.getErrorMessage())
-            reactor.stop()
-            break
-    else:
-        reactor.stop()
+    try:
+        for sql_str in sql_str_list:
+            result = yield DbMySql.operation('dht', sql_str)
+            if isinstance(result, Failure):
+                Logger.debug(sql_str, result.getErrorMessage())
+                break
+    except Exception, e:
+        Logger.error(e)
+    reactor.stop()
 
 
 if __name__ == '__main__':
     Logger.open_std_log()
     Logger.show_task_id(False)
-    DbMySql.DEBUG = True
 
     info = dict(db='', user='root', passwd='359359', host='127.0.0.1', port=3306)
     DbMySql.connect('dht', info)
