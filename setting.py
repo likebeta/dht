@@ -4,6 +4,8 @@
 # Author: likebeta <ixxoo.me@gmail.com>
 # Create: 2016-09-02
 
+import os
+
 dht_db_info = {
     'db': '',
     'user': 'root',
@@ -20,8 +22,10 @@ search_db_info = {
     'port': 9306
 }
 
-webroot = '/home/dht/dht/web/static'
-web_log_path = '/home/dht/log/web.log'
-web_port = 8888
+root_path = os.path.dirname(os.path.abspath(__file__))
+log_path = os.path.dirname(root_path)
 
-dht_metadata_path = '../metadata'
+web_port = 8888
+web_root = root_path + '/web/static'
+web_log_path = log_path + '/log/web.log'
+dht_metadata_path = log_path + '/metadata'
