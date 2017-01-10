@@ -76,7 +76,8 @@ class ServerHttpFactory(BasicHttpFactory):
 
 if __name__ == "__main__":
     Logger.show_task_id(False)
-    Logger.open_std_log()
+    # Logger.open_std_log()
+    Logger.open_log(setting.web_log_path)
     DbMySql.connect('search', setting.search_db_info)
     factory = ServerHttpFactory(setting.web_log_path, setting.web_root)
     # reactor.listenTCP(setting.web_port, factory, interface='127.0.0.1')
