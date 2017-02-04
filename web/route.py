@@ -9,6 +9,7 @@ import jinja2
 from util.tool import Util
 from util.log import Logger
 from util.db_mysql import DbMySql
+from twisted.internet import defer
 from util.exceptions import NotFoundException
 from util.response import http_response_handle
 
@@ -40,6 +41,7 @@ class Router(object):
         tpl = self.env.get_template('index.html', globals={'Util': Util})
         return tpl.render().encode('utf-8')
 
+    @defer.inlineCallbacks
     def search(self, args, request):
         keyword = args.get('s')
         page = int(args.get('p', 1))
@@ -49,33 +51,32 @@ class Router(object):
             page = 100
 
         if keyword:
-            d = DbMySql.interaction('search', self.do_search, keyword, page, 10)
-            d.addCallback(self.rander_page, 'search.html')
-            return d
+            result = yield DbMySql.interaction('search', self.do_search, keyword, page, 10)
+            Logger.debug(result)
+            result = yield DbMySql.interaction('dht', self.do_search_detail, result)
+            html = self.rander_page(result, 'search.html')
+            defer.returnValue(html)
 
+    @defer.inlineCallbacks
     def detail(self, args, request):
         keyword = args.get('s')
         tid = int(args.get('i', 0))
         if tid <= 0:
             tid = 1
         if keyword:
-            d = DbMySql.interaction('search', self.do_detail, keyword, tid)
-            d.addCallback(self.rander_page, 'detail.html')
-            return d
+            result = yield DbMySql.interaction('dht', self.do_detail, keyword, tid)
+            html = self.rander_page(result, 'detail.html')
+            defer.returnValue(html)
 
     def do_search(self, tst, keyword, page, count):
         offset = (page - 1) * count
-        sql = "SELECT id, info_hash, name, length, hit, create_time, access_ts, files FROM search WHERE MATCH(%s) "
+        sql = "SELECT id, info_hash, name, length, hit, create_time, access_ts FROM search WHERE MATCH(%s) "
         sql += "LIMIT %s, %s;"
         tst.execute(sql, (keyword, offset, count))
         result = [list(one) for one in tst.fetchall()]
-        fields = ('id', 'info_hash', 'name', 'length', 'hit', 'create_time', 'access_ts', 'files')
+        fields = ('id', 'info_hash', 'name', 'length', 'hit', 'create_time', 'access_ts')
         for i, one in enumerate(result):
             detail = dict(zip(fields, one))
-            if not detail['files']:
-                del detail['files']
-            else:
-                detail['files'] = json.loads(detail['files'])
             result[i] = detail
 
         tst.execute('SHOW META')
@@ -107,8 +108,23 @@ class Router(object):
         info['pages'] = pages
         return info
 
+    def do_search_detail(self, tst, result):
+        ids = []
+        id_detail_map = dict()
+        for one in result['list']:
+            id_detail_map[one['id']] = one
+            ids.append(str(one['id']))
+
+        sql = "SELECT id, files FROM bt WHERE id IN (%s) LIMIT %s;"
+        tst.execute(sql, (','.join(ids), len(ids)))
+        files_detail = [list(one) for one in tst.fetchall()]
+        for line in files_detail:
+            if line[1] is not None:
+                id_detail_map[line[0]]['files'] = json.loads(line[1])
+        return result
+
     def do_detail(self, tst, keyword, tid):
-        sql = "SELECT info_hash, name, length, hit, create_time, access_ts, files FROM search WHERE id=%s LIMIT 1;"
+        sql = "SELECT info_hash, name, length, hit, UNIX_TIMESTAMP(create_time) AS create_time, UNIX_TIMESTAMP(access_ts) AS access_ts, files FROM bt WHERE id=%s LIMIT 1;"
         tst.execute(sql, (tid,))
         result = tst.fetchall()
         if not result:

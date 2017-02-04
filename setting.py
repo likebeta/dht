@@ -7,7 +7,7 @@
 import os
 
 dht_db_info = {
-    'db': '',
+    'db': 'dht',
     'user': 'root',
     'passwd': '359359',
     'host': '127.0.0.1',
