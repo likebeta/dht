@@ -6,3 +6,4 @@ service_identity
 pymysql
 Jinja2
 pyquery
+https://github.com/likebeta/txMySQL/archive/master.zip
