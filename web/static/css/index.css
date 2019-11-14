@@ -147,9 +147,9 @@ body {
 .LOGO {
     background: url(../img/tmd-logo.png);
     color: #7381a6;
-    background-size: 250px 200px;
+    background-size: 250px 250px;
     width: 250px;
-    height: 170px;
+    height: 250px;
     margin: auto;
 }
 
