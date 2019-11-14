@@ -76,7 +76,7 @@ class ServerHttpFactory(BasicHttpFactory):
 
 if __name__ == "__main__":
     Logger.show_task_id(False)
-    # Logger.open_std_log()
+    Logger.open_std_log()
     Logger.open_log(setting.web_log_path)
     DbMySql.connect('dht', setting.dht_db_info)
     DbMySql.connect('search', setting.search_db_info)

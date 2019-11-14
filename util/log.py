@@ -63,6 +63,7 @@ class Logger(object):
     _show_prefix = False
     _show_network = True
     _show_redis = True
+    _show_mysql = True
     _open_std_log = False
     _open_log = False
     _open_bi_log = False
@@ -71,7 +72,7 @@ class Logger(object):
     @classmethod
     def open_log(cls, fpath):
         if cls._open_log:
-            cls.warn('open log have called')
+            cls.warn('open log have been called')
             return
         formatter = LogFormatter('%(asctime)s%(levelname)s%(message)s')
         handler = logging.handlers.TimedRotatingFileHandler(fpath, when='MIDNIGHT')
@@ -80,24 +81,20 @@ class Logger(object):
         cls.__logger.addHandler(handler)
         cls.__logger.setLevel(logging.DEBUG)
         cls._open_log = True
-        if hasattr(cls, 'std_handler'):
-            cls.__logger.removeHandler(getattr(cls, 'std_handler'))
 
     @classmethod
     def open_std_log(cls):
         if cls._open_std_log:
-            cls.warn('open std log have called')
+            cls.warn('open std log have been called')
             return
 
-        std_handler = logging.StreamHandler(sys.stdout)
-        std_formatter = LogFormatter('%(asctime)s%(levelname)s%(message)s')
-        std_handler.setFormatter(std_formatter)
-        std_handler.setLevel(logging.DEBUG)
-        std_logger = logging.getLogger()
-        std_logger.addHandler(std_handler)
-        std_logger.setLevel(logging.DEBUG)
+        handler = logging.StreamHandler(sys.stdout)
+        formatter = LogFormatter('%(asctime)s%(levelname)s%(message)s')
+        handler.setFormatter(formatter)
+        handler.setLevel(logging.DEBUG)
+        cls.__logger.addHandler(handler)
+        cls.__logger.setLevel(logging.DEBUG)
         cls._open_std_log = True
-        cls.std_handler = std_handler
 
     @classmethod
     def is_debug_network(cls):
@@ -154,6 +151,11 @@ class Logger(object):
             cls.__log(logging.DEBUG, *args)
 
     @classmethod
+    def debug_mysql(cls, *args):
+        if cls._show_mysql:
+            cls.__log(logging.DEBUG, *args)
+
+    @classmethod
     def debug(cls, *args):
         cls.__log(logging.DEBUG, *args)
 
@@ -190,16 +192,16 @@ class Logger(object):
     @classmethod
     def __log(cls, level, *args):
         if cls.__logger.isEnabledFor(level):
-            msg = cls.__serialize_args(*args)
+            record = cls.__serialize_args(*args)
             if cls._show_prefix:
                 import inspect
                 frame = inspect.currentframe().f_back.f_back
                 segs = frame.f_code.co_filename.split('/')
                 # filename = frame.f_code.co_filename
                 filename = segs[-1]
-                log_message = '%s:%s | %s' % (filename, frame.f_lineno, msg)
+                log_message = '%s:%s | %s' % (filename, frame.f_lineno, record)
             else:
-                log_message = msg
+                log_message = record
             if level not in (cls.INFO, cls.BI):
                 log_message += _RECOVERY
             if cls._show_task_id:
@@ -223,7 +225,10 @@ class Logger(object):
         convert a single argument to string
         @param string_within_quotos
         """
-        return str(arg_object)
+        if isinstance(arg_object, unicode):
+            return arg_object.encode('utf8')
+        else:
+            return str(arg_object)
         # if isinstance(arg_object, (str, unicode)):
         #     try:
         #         segment = unicode(arg_object).encode('utf8')
