@@ -14,7 +14,7 @@ from twisted.python.failure import Failure
 @defer.inlineCallbacks
 def main():
     sql_str_list = (
-        "CREATE DATABASE IF NOT EXISTS dht DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;",
+        "CREATE DATABASE IF NOT EXISTS dht DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;",
         "use dht;",
         "CREATE TABLE IF NOT EXISTS `bt`(" +
         "`id` INT(4) unsigned NOT NULL PRIMARY KEY auto_increment," +
@@ -25,7 +25,7 @@ def main():
         "`access_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP," +
         "`length` BIGINT(8) NOT NULL DEFAULT '0'," +
         "`files` TEXT DEFAULT NULL)" +
-        "DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;"
+        "DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
     )
     try:
         for sql_str in sql_str_list:
@@ -34,7 +34,7 @@ def main():
                 Logger.debug(sql_str, result.getErrorMessage())
                 break
     except Exception, e:
-        Logger.error(e)
+        Logger.error(5656, e)
     reactor.stop()
 
 

@@ -30,7 +30,7 @@ class DbMySql(object):
 
         if DEBUG:
             Logger.info('DbMySql.connect->', alias_name, db, user, passwd, host, port)
-        conn = adbapi.ConnectionPool('pymysql', db=db, user=user, passwd=passwd, host=host, port=port, charset='utf8',
+        conn = adbapi.ConnectionPool('pymysql', db=db, user=user, passwd=passwd, host=host, port=port, charset='utf8mb4',
                                      use_unicode=True, cp_reconnect=True, cp_min=min_pool, cp_max=max_pool)
         if DEBUG:
             Logger.info('DbMySql.__init__->done', conn)

@@ -7,9 +7,9 @@
 import sys
 import pymysql as mdb
 
-dst_conn = mdb.connect('127.0.0.1', '', '', '', port=9306, charset='utf8')
+dst_conn = mdb.connect('127.0.0.1', '', '', '', port=9306, charset='utf8mb4')
 dst_curr = dst_conn.cursor()
-dst_curr.execute('SET NAMES utf8')
+dst_curr.execute('SET NAMES utf8mb4')
 
 sql = 'SELECT id, name FROM search WHERE id=%s limit 1;'
 dst_curr.execute(sql, (int(sys.argv[1]),))
