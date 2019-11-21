@@ -4,8 +4,6 @@
 # Author: likebeta <ixxoo.me@gmail.com>
 # Create: 2016-09-02
 
-import os
-
 dht_db_info = {
     'db': 'dht',
     'user': 'root',

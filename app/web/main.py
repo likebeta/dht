@@ -4,11 +4,18 @@
 # Author: likebeta <ixxoo.me@gmail.com>
 # Create: 2016-10-05
 
+import cron
 import setting
+from route import Router
 from twisted.internet import defer
 from twisted.internet import reactor
-from util.log import Logger
+from protocol import BasicRequest
+from protocol import BasicResource
+from protocol import BasicHttpFactory
+from protocol import BasicHttpProtocol
 from util.tool import Util
+from util.log import Logger
+from util.db_mysql import DbMySql
 from util.response import http_response
 from util.response import http_response_500
 from util.response import http_response_404
@@ -16,12 +23,6 @@ from util.response import http_response_403
 from util.exceptions import SystemException
 from util.exceptions import NotFoundException
 from util.exceptions import ForbiddenException
-from util.db_mysql import DbMySql
-from route import Router
-from protocol import BasicRequest
-from protocol import BasicResource
-from protocol import BasicHttpFactory
-from protocol import BasicHttpProtocol
 
 
 class ServerHttpProtocol(BasicHttpProtocol):
@@ -88,7 +89,9 @@ if __name__ == "__main__":
     Logger.open_std_log()
     Logger.open_log(log_path)
     DbMySql.connect('dht', setting.dht_db_info)
+    cron.keep_mysql_conn_alive('dht')
     DbMySql.connect('search', setting.search_db_info)
+    cron.keep_mysql_conn_alive('search')
     factory = ServerHttpFactory(log_path, web_root)
     # reactor.listenTCP(setting.web_port, factory, interface='127.0.0.1')
     Logger.info("listen tcp at", setting.listen_port)
