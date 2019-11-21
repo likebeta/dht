@@ -16,7 +16,7 @@ from util.response import http_response_handle
 
 class Router(object):
     def __init__(self):
-        self.env = jinja2.Environment(loader=jinja2.PackageLoader('web', 'template'))
+        self.env = jinja2.Environment(loader=jinja2.FileSystemLoader('template'))
         self.json_path = {
             '/': self.index,
             '/q': self.search,
@@ -52,7 +52,7 @@ class Router(object):
 
         if keyword:
             result = yield DbMySql.interaction('search', self.do_search, keyword, page, 10)
-            Logger.debug(result)
+            # Logger.debug(result)
             result = yield DbMySql.interaction('dht', self.do_search_detail, result)
             html = self.rander_page(result, 'search.html')
             defer.returnValue(html)

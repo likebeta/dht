@@ -30,7 +30,8 @@ class BasicDailyLogFile(logfile.DailyLogFile):
 
 
 class BasicRequest(server.Request):
-    sessionCookieName = None
+    cookieString = 'x_session'
+    secureCookieString = 'x_session'
 
     def __init__(self, *args, **kw):
         server.Request.__init__(self, *args, **kw)
@@ -38,31 +39,56 @@ class BasicRequest(server.Request):
 
     def render(self, resrc):
         if isinstance(resrc, (resource.NoResource, static.DirectoryLister)):
-            self.channel.receiveDone(self)
+            self.channel.receive_done(self)
         else:
+            self.setHeader('Access-Control-Allow-Origin', self.get_origin())
+            self.setHeader('Access-Control-Allow-Credentials', 'true')
             server.Request.render(self, resrc)
 
     def getClientIP(self):
+        try:
+            X_Forwarded_For = self.requestHeaders.getRawHeaders('X-Forwarded-For')
+            if X_Forwarded_For:
+                return X_Forwarded_For[0].split(',')[0].strip()
+        except Exception, e:
+            pass
         return self.getHeader('X-Real-IP') or server.Request.getClientIP(self)
 
-    def getSession(self, sessionInterface=None):
+    def getSession(self, sessionInterface=None, forceNotSecure=False):
+        # Make sure we aren't creating a secure session on a non-secure page
+        secure = self.isSecure() and not forceNotSecure
+
+        if not secure:
+            cookieString = self.cookieString or b"TWISTED_SESSION"
+            sessionAttribute = "_insecureSession"
+        else:
+            cookieString = self.secureCookieString or b"TWISTED_SECURE_SESSION"
+            sessionAttribute = "_secureSession"
+
+        session = getattr(self, sessionAttribute)
+
         # Session management
-        if not self.session:
-            cookiename = self.sessionCookieName or b"_".join([b'TWISTED_SESSION'] + self.sitepath)
+        if not session:
+            cookiename = b"_".join([cookieString] + self.sitepath)
             sessionCookie = self.getCookie(cookiename)
             if sessionCookie:
                 try:
-                    self.session = self.site.getSession(sessionCookie)
+                    session = self.site.getSession(sessionCookie)
                 except KeyError:
                     pass
             # if it still hasn't been set, fix it up.
-            if not self.session:
-                self.session = self.site.makeSession()
-                self.addCookie(cookiename, self.session.uid, path=b'/')
-        self.session.touch()
+            if not session:
+                session = self.site.makeSession()
+                self.addCookie(cookiename, session.uid, path=b"/",
+                               secure=secure)
+
+        session.touch()
+        setattr(self, sessionAttribute, session)
+
         if sessionInterface:
-            return self.session.getComponent(sessionInterface)
-        return self.session
+            return session.getComponent(sessionInterface)
+
+        return session
 
     def get_args(self):
         args = {}
@@ -81,12 +107,12 @@ class BasicRequest(server.Request):
 
 
 class BasicHttpProtocol(http.HTTPChannel):
-    def makeTask(self, request):
+    def make_task(self, request):
         raise NotImplementedError
 
-    def receiveDone(self, request):
+    def receive_done(self, request):
         try:
-            self.makeTask(request)
+            self.make_task(request)
         except Exception, e:
             Logger.exception()
             body, content_type = http_response_500(request)
@@ -97,26 +123,24 @@ class BasicHttpFactory(server.Site):
     def __init__(self, logPath, resource, **kwargs):
         logPath += '.access'
         if 'logFormatter' not in kwargs:
-            kwargs['logFormatter'] = self.timedLogFormatter
+            kwargs['logFormatter'] = self.time_log_formatter
         server.Site.__init__(self, resource, logPath=logPath, **kwargs)
 
     def _openLogFile(self, path):
         return BasicDailyLogFile(os.path.basename(path), os.path.dirname(path))
 
     @classmethod
-    def timedLogFormatter(cls, timestamp, request):
-        from twisted.web.http import _escape
-
-        referrer = _escape(request.getHeader("referer") or "-")
-        agent = _escape(request.getHeader("user-agent") or "-")
+    def time_log_formatter(cls, timestamp, request):
+        referrer = http._escape(request.getHeader("referer") or "-")
+        agent = http._escape(request.getHeader("user-agent") or "-")
         tc = round(time.time() - request.started, 4)
         line = u'%(fmt)s | "%(ip)s" %(tc)ss %(code)d %(length)s "%(method)s %(uri)s %(proto)s" "%(agent)s" "%(ref)s"' % {
             'fmt': Time.current_time('%m-%d %H:%M:%S.%f'),
-            'ip': _escape(request.getClientIP() or "-"),
+            'ip': http._escape(request.getClientIP() or "-"),
             'tc': tc,
-            'method': _escape(request.method),
-            'uri': _escape(request.uri),
-            'proto': _escape(request.clientproto),
+            'method': http._escape(request.method),
+            'uri': http._escape(request.uri),
+            'proto': http._escape(request.clientproto),
             'code': request.code,
             'length': request.sentLength or "-",
             'agent': agent,

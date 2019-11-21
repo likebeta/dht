@@ -5,16 +5,15 @@
 # Create: 2016-09-02
 
 import json
-# import bencode
-import setting
 # import hyperloglog
+from util import torrent
+from util.tool import Util
 from util.log import Logger
-from dht.kademlia.server import DHTServer
-from dht.kademlia.const import NODE_COUNT
+from util.kademlia.server import DHTServer
+from util.kademlia.const import NODE_COUNT
 from twisted.internet import reactor
 from twisted.internet import defer
-from dht.protocol import TcpClientFactory
-from dht.parser import Parser
+from protocol import TcpClientFactory
 from collections import defaultdict
 
 
@@ -78,7 +77,7 @@ class DHTWorker(object):
     def on_success_download(self, metadata, info_hash, hex_hash):
         Logger.info(hex_hash, 'success', metadata['name'])
         self.dl_ing.discard(info_hash)
-        info, _ = Parser.parse_torrent(metadata)
+        info, _ = torrent.parse(metadata)
         if info:
             info['hit'], self.bt_hit[info_hash] = self.bt_hit[info_hash], 0
             data_json = json.dumps(info, separators=(',', ':'))
@@ -94,11 +93,11 @@ class DHTWorker(object):
 if __name__ == '__main__':
     import os
 
-    if not os.path.exists(setting.dht_metadata_path):
-        os.makedirs(setting.dht_metadata_path)
+    path_ = Util.abs_path('~/metadata')
+    Util.make_dirs(path_)
     Logger.show_task_id(False)
     Logger.open_std_log()
-    worker = DHTWorker(setting.dht_metadata_path)
+    worker = DHTWorker(path_)
     for i in range(NODE_COUNT):
         reactor.listenUDP(6882 + i, DHTServer(worker))
         Logger.info('listen on udp port', 6882 + i)

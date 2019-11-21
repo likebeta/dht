@@ -43,9 +43,9 @@ def main():
         ('ls -l metadata | wc -l', lambda text: int(text) >= 200000),
         ('sh stop.sh',),
         (r'find ./dht -name "*.pyc" -exec rm "{}" \;',),
-        ('tar -jcf metadata.tar.bz2.%s metadata' % fmt,),
-        ('sh dropbox_uploader.sh upload metadata.tar.bz2.%s metadata.tar.bz2.%s' % (fmt, fmt),),
-        ('rm -rf dht.log metadata metadata.tar.bz2.%s' % fmt,),
+        ('tar -jcf metadata.%s.tar.bz2 metadata' % fmt,),
+        ('sh dropbox_uploader.sh upload metadata.%s.tar.bz2 metadata.%s.tar.bz2' % (fmt, fmt),),
+        ('rm -rf dht.log metadata metadata.%s.tar.bz2' % fmt,),
         ('sh start.sh',),
     )
     for cmd in cmds:

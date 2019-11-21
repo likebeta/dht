@@ -22,10 +22,6 @@ search_db_info = {
     'port': 9306
 }
 
-root_path = os.path.dirname(os.path.abspath(__file__))
-log_path = os.path.dirname(root_path)
-
-web_port = 8888
-web_root = root_path + '/web/static'
-web_log_path = log_path + '/log/web.log'
-dht_metadata_path = log_path + '/metadata'
+listen_port = 8888
+web_root = './static'
+log_path = '~/log/web.log'

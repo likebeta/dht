@@ -130,5 +130,5 @@ def http_response_403(request):
     return http_response(request, '{"error":403,"desc":"Forbidden Access"}', 403, 'application/json')
 
 
-__all__ = ['XmlResult', 'JsonResult', 'TextResult', 'HtmlResult', 'http_response_handle', 'http_response_500',
-           'http_response_404', 'http_response_403']
+__all__ = ['XmlResult', 'JsonResult', 'TextResult', 'HtmlResult', 'http_response_handle', 'http_response',
+           'http_response_500', 'http_response_404', 'http_response_403']

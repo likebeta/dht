@@ -7,10 +7,10 @@
 import struct
 import hashlib
 import bencode
+from util.log import Logger
+from util.kademlia import utils
 from twisted.internet.protocol import Protocol
 from twisted.internet.protocol import ClientFactory
-from util.log import Logger
-from dht.kademlia import utils
 
 BT_PROTOCOL = 'BitTorrent protocol'
 

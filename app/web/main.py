@@ -8,6 +8,7 @@ import setting
 from twisted.internet import defer
 from twisted.internet import reactor
 from util.log import Logger
+from util.tool import Util
 from util.response import http_response
 from util.response import http_response_500
 from util.response import http_response_404
@@ -15,12 +16,12 @@ from util.response import http_response_403
 from util.exceptions import SystemException
 from util.exceptions import NotFoundException
 from util.exceptions import ForbiddenException
-from web.route import Router
-from web.protocol import BasicRequest
-from web.protocol import BasicResource
-from web.protocol import BasicHttpFactory
-from web.protocol import BasicHttpProtocol
 from util.db_mysql import DbMySql
+from route import Router
+from protocol import BasicRequest
+from protocol import BasicResource
+from protocol import BasicHttpFactory
+from protocol import BasicHttpProtocol
 
 
 class ServerHttpProtocol(BasicHttpProtocol):
@@ -30,7 +31,7 @@ class ServerHttpProtocol(BasicHttpProtocol):
             return
 
         body, content_type = http_response(request, result)
-        Logger.debug('<====', request.path, content_type, repr(body))
+        Logger.debug('<====', request.path, content_type)
 
     def __defer_errback(self, result, request):
         if request._disconnected:
@@ -40,7 +41,7 @@ class ServerHttpProtocol(BasicHttpProtocol):
         body, content_type = http_response_500(request)
         Logger.debug('<====', request.path, content_type, repr(body))
 
-    def makeTask(self, request):
+    def make_task(self, request):
         Logger.debug('====>', request.path)
         try:
             mo = Router.onMessage(request)
@@ -63,7 +64,7 @@ class ServerHttpProtocol(BasicHttpProtocol):
         except Exception, e:
             Logger.exception()
             body, content_type = http_response_500(request)
-        Logger.debug('<====', request.path, content_type, repr(body))
+        Logger.debug('<====', request.path, content_type)
 
 
 class ServerHttpFactory(BasicHttpFactory):
@@ -75,12 +76,21 @@ class ServerHttpFactory(BasicHttpFactory):
 
 
 if __name__ == "__main__":
+    import os
+
+    web_root = Util.abs_path(setting.web_root)
+    Util.make_dirs(web_root)
+    log_path = Util.abs_path(setting.log_path)
+    log_dir = os.path.dirname(log_path)
+    Util.make_dirs(log_dir)
+
     Logger.show_task_id(False)
     Logger.open_std_log()
-    Logger.open_log(setting.web_log_path)
+    Logger.open_log(log_path)
     DbMySql.connect('dht', setting.dht_db_info)
     DbMySql.connect('search', setting.search_db_info)
-    factory = ServerHttpFactory(setting.web_log_path, setting.web_root)
+    factory = ServerHttpFactory(log_path, web_root)
     # reactor.listenTCP(setting.web_port, factory, interface='127.0.0.1')
-    reactor.listenTCP(setting.web_port, factory)
+    Logger.info("listen tcp at", setting.listen_port)
+    reactor.listenTCP(setting.listen_port, factory)
     reactor.run()

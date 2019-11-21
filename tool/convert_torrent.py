@@ -9,8 +9,8 @@ import sys
 import json
 import bencode
 import hashlib
+from util import torrent
 from util.log import Logger
-from dht.parser import Parser
 
 
 def walk_dir(root, func, *args):
@@ -25,8 +25,8 @@ def walk_dir(root, func, *args):
 def convert_torrent(path, save_path):
     with open(path) as f:
         Logger.debug('start process', path)
-        torrent = f.read()
-        info, metadata = Parser.parse_torrent(torrent)
+        buf = f.read()
+        info, metadata = torrent.parse(buf)
         if info:
             hex_hash = hashlib.sha1(bencode.bencode(metadata)).digest().encode('hex')
             with open('%s/%s' % (save_path, hex_hash), 'w') as f:

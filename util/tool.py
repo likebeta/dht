@@ -4,6 +4,7 @@
 # Author: likebeta <ixxoo.me@gmail.com>
 # Create: 2014-11-07
 
+import os
 import re
 import time
 import datetime
@@ -241,3 +242,13 @@ class Util(object):
     @classmethod
     def format_ts(cls, ts, fmt='%Y-%m-%d %X'):
         return Time.timestamp_to_str(ts, fmt)
+
+    @classmethod
+    def abs_path(cls, p):
+        path_ = os.path.abspath(os.path.expanduser(p))
+        return path_
+
+    @classmethod
+    def make_dirs(cls, path_):
+        if not os.path.exists(path_):
+            os.makedirs(path_)
