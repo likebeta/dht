@@ -1,19 +1,20 @@
 <!DOCTYPE html>
+<!--suppress ALL -->
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta charset="utf-8">
     <title>Search {{ info.keyword }} Torrents, Magnet</title>
     <meta name="keywords" content="{{ info.keyword }},Download {{ info.keyword }},{{ info.keyword }} Torrent,{{ info.keyword }} Magnet"/>
-    <link type="image/x-icon" href="img/favicon.ico" rel="shortcut icon"/>
+    <link type="image/x-icon" href="/static/img/favicon.ico" rel="shortcut icon"/>
     <meta name="viewport" content="width=device-width">
     <script src="//cdnjs.loli.net/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen"/>
-    <link rel="stylesheet" href="css/reset.css"/>
-    <link rel="stylesheet" href="css/search.css"/>
-    <link rel="stylesheet" href="css/empty.css"/>
-    <script src="js/utils.js"></script>
+    <link rel="stylesheet" href="/static/css/reset.css"/>
+    <link rel="stylesheet" href="/static/css/search.css"/>
+    <link rel="stylesheet" href="/static/css/empty.css"/>
+    <script src="/static/js/utils.js"></script>
 </head>
 {% set encode_keyword = info.keyword|urlencode %}
 <body>

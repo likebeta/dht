@@ -16,7 +16,7 @@ from util.response import http_response_handle
 
 class Router(object):
     def __init__(self):
-        self.env = jinja2.Environment(loader=jinja2.FileSystemLoader('template'))
+        self.env = jinja2.Environment(loader=jinja2.FileSystemLoader('assets/template'))
         self.json_path = {
             '/': self.index,
             '/q': self.search,
@@ -38,7 +38,7 @@ class Router(object):
 
     @http_response_handle(response='html')
     def index(self, args, request):
-        tpl = self.env.get_template('index.html', globals={'Util': Util})
+        tpl = self.env.get_template('index_new.html', globals={'Util': Util})
         return tpl.render().encode('utf-8')
 
     @defer.inlineCallbacks

@@ -21,5 +21,5 @@ search_db_info = {
 }
 
 listen_port = 8888
-web_root = './static'
+web_root = './assets'
 log_path = '~/log/web.log'

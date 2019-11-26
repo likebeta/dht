@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Doge多吉</ShortName>
+  <Description>一个不误导，追踪你的搜索引擎。</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image></Image>
+  <LongName>DogeDoge多吉搜索</LongName>
+    <Url type="text/html" method="get" template="https://btku.eu.org/q?s={searchTerms}"/>
+</OpenSearchDescription>
