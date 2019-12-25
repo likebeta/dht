@@ -118,17 +118,17 @@ def http_response(request, mo, code=None, content_type=None):
     return body, content_type
 
 
-def http_response_500(request):
+def json_response_500(request):
     return http_response(request, '{"error":500,"desc":"System Error"}', 500, 'application/json')
 
 
-def http_response_404(request):
+def json_response_404(request):
     return http_response(request, '{"error":404,"desc":"Not Found"}', 404, 'application/json')
 
 
-def http_response_403(request):
+def json_response_403(request):
     return http_response(request, '{"error":403,"desc":"Forbidden Access"}', 403, 'application/json')
 
 
 __all__ = ['XmlResult', 'JsonResult', 'TextResult', 'HtmlResult', 'http_response_handle', 'http_response',
-           'http_response_500', 'http_response_404', 'http_response_403']
+           'json_response_500', 'json_response_404', 'json_response_403']

@@ -32,7 +32,7 @@ class Router(object):
         raise NotFoundException('Not Found')
 
     @http_response_handle(response='html')
-    def rander_page(self, result, tpl_name):
+    def render_page(self, result, tpl_name):
         tpl = self.env.get_template(tpl_name, globals={'Util': Util})
         return tpl.render(info=result).encode('utf-8')
 
@@ -54,7 +54,7 @@ class Router(object):
             result = yield DbMySql.interaction('search', self.do_search, keyword, page, 10)
             # Logger.debug(result)
             result = yield DbMySql.interaction('dht', self.do_search_detail, result)
-            html = self.rander_page(result, 'search.html')
+            html = self.render_page(result, 'search.html')
             defer.returnValue(html)
 
     @defer.inlineCallbacks
@@ -65,7 +65,7 @@ class Router(object):
             tid = 1
         if keyword:
             result = yield DbMySql.interaction('dht', self.do_detail, keyword, tid)
-            html = self.rander_page(result, 'detail.html')
+            html = self.render_page(result, 'detail.html')
             defer.returnValue(html)
 
     def do_search(self, tst, keyword, page, count):

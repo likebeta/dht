@@ -18,6 +18,6 @@ def keep_mysql_conn_alive(alias_name):
 def ping(alias_name):
     try:
         Logger.info('keep alive', alias_name)
-        DbMySql.operation(alias_name, 'SELECT 1;')
+        DbMySql.operation(alias_name, 'SELECT 1 FROM bt limit 1;')
     except Exception, e:
         Logger.exception('----ping exception-----')

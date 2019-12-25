@@ -17,9 +17,6 @@ from util.tool import Util
 from util.log import Logger
 from util.db_mysql import DbMySql
 from util.response import http_response
-from util.response import http_response_500
-from util.response import http_response_404
-from util.response import http_response_403
 from util.exceptions import SystemException
 from util.exceptions import NotFoundException
 from util.exceptions import ForbiddenException
@@ -39,7 +36,9 @@ class ServerHttpProtocol(BasicHttpProtocol):
             Logger.info('<====', request.path, 'connection lost')
             return
         Logger.exception()
-        body, content_type = http_response_500(request)
+
+        mo = Router.render_page({'code': 500, 'desc': 'System Error'}, 'error.html')
+        body, content_type = http_response(request, mo)
         Logger.debug('<====', request.path, content_type, repr(body))
 
     def make_task(self, request):
@@ -57,14 +56,18 @@ class ServerHttpProtocol(BasicHttpProtocol):
 
             body, content_type = http_response(request, mo)
         except SystemException, e:
-            body, content_type = http_response_500(request)
+            mo = Router.render_page({'code': 500, 'desc': 'System Error'}, 'error.html')
+            body, content_type = http_response(request, mo)
         except NotFoundException, e:
-            body, content_type = http_response_404(request)
+            mo = Router.render_page({'code': 404, 'desc': 'Not Found'}, 'error.html')
+            body, content_type = http_response(request, mo)
         except ForbiddenException, e:
-            body, content_type = http_response_403(request)
+            mo = Router.render_page({'code': 403, 'desc': 'Forbidden Access'}, 'error.html')
+            body, content_type = http_response(request, mo)
         except Exception, e:
             Logger.exception()
-            body, content_type = http_response_500(request)
+            mo = Router.render_page({'code': 500, 'desc': 'System Error'}, 'error.html')
+            body, content_type = http_response(request, mo)
         Logger.debug('<====', request.path, content_type)
 
 

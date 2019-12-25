@@ -25,6 +25,17 @@
     <title>Free Torrent Search</title>
     <link title="DogeDoge" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
     <style>
+        .red-area {
+            width: 100%;
+            height: 5px;
+            background: #c9481c;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999999;
+        }
+
         .content-wrap--home {
             top: 18%;
         }
@@ -48,6 +59,7 @@
 </head>
 
 <body class="page-index body--home">
+<div class="red-area"></div>
 <script src="/static/js/jquery.min.js"></script>
 <div class="site-wrapper site-wrapper--home js-site-wrapper">
     <div class="header-wrap--home js-header-wrap">

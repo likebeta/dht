@@ -13,7 +13,7 @@ from twisted.web import resource
 from twisted.python import logfile
 from util.tool import Time
 from util.log import Logger
-from util.response import http_response_500
+from util.response import json_response_500
 
 
 class BasicResource(static.File):
@@ -115,7 +115,7 @@ class BasicHttpProtocol(http.HTTPChannel):
             self.make_task(request)
         except Exception, e:
             Logger.exception()
-            body, content_type = http_response_500(request)
+            body, content_type = json_response_500(request)
             Logger.debug('<====', request.path, content_type, repr(body))
 
 
