@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="/static/css/o1764.css" type="text/css">
     <link href="/static/css/lato-open-sans.css" rel="stylesheet">
     <link rel="shortcut icon" href="/static/img/doge_ico.png" type="image/png">
-    <title>DogeDoge 多吉搜索 — 不追踪，不误导</title>
+    <title>Free Torrent Search</title>
     <link title="DogeDoge" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
     <style>
         .content-wrap--home {
@@ -88,9 +88,9 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var client = {
+        let client = {
             browser: function () {
-                var ua = navigator.userAgent, app = navigator.appVersion;
+                let ua = navigator.userAgent, app = navigator.appVersion;
                 return {//移动终端浏览器版本信息
                     isTrident: ua.indexOf('Trident') > -1, //IE内核
                     isPresto: ua.indexOf('Presto') > -1, //opera内核
@@ -106,7 +106,7 @@
                 };
             }(),
             os: function () {
-                var ua = navigator.userAgent,
+                let ua = navigator.userAgent,
                     isWindowsPhone = /(?:Windows Phone)/.test(ua),
                     isSymbian = /(?:SymbianOS)/.test(ua) || isWindowsPhone,
                     isAndroid = /(?:Android)/.test(ua),
@@ -153,9 +153,9 @@
             }
         });
         $(document).keyup(function () {
-            var autoc = $('#search__autocomplete');
+            let autoc = $('#search__autocomplete');
             if (autoc.is(':visible')) {
-                var o_val = autoc.val();
+                let o_val = autoc.val();
                 autoc.focus();
                 autoc.val('');
                 autoc.val(o_val);
@@ -165,32 +165,32 @@
     });
 
     function do_sugg(obj) {
-        var count = $(obj).val().length;
-        var auto_div = $("#search__autocomplete");
+        let count = $(obj).val().length;
+        let auto_div = $("#search__autocomplete");
         if (count > 0) {
             $('#search_form_homepage').addClass("has-text");
             $.ajax({
                 cache: true,
                 async: true,
-                url: "https://suggestion.baidu.com/?wd=" + $(obj).val(),
+                url: "https://suggestion.baidu.com/su?wd=" + $(obj).val(),
                 dataType: "jsonp",          //指定服务器返回的数据类型
                 jsonp: "cb",                //指定参数名称
-                /* jsonpCallback: "show_sugg",  //指定回调函数名称 */
+                //jsonpCallback: "show_sugg",  //指定回调函数名称
                 success: function (result) {
                     if (result.s.length === 0) {
                         return;
                     }
                     result.s = result.s.slice(0, 8);
-                    var html = '';
-                    for (var i = 0; i < result.s.length; i++) {
+                    let html = '';
+                    for (let i = 0; i < result.s.length; i++) {
                         html += '<div class="acp" tabindex="' + (i + 1) + '"><span class="t-normal">' + result.s[i] + '</span></div>'
                     }
-                    var tempDiv = document.createElement("div");
+                    let tempDiv = document.createElement("div");
                     $('#search_form_homepage').addClass('has-suggestions');
                     auto_div.show();
-                    var newDIV = $(tempDiv).addClass('acp-wrap').html(html);
-                    var fake_acp = document.createElement("div");
-                    var fake_acp = $(fake_acp).addClass('acp').attr('tabindex', '0').text($(obj).val());
+                    let newDIV = $(tempDiv).addClass('acp-wrap').html(html);
+                    let fake_acp = document.createElement("div");
+                    fake_acp = $(fake_acp).addClass('acp').attr('tabindex', '0').text($(obj).val());
                     fake_acp.hide();
                     auto_div.html(newDIV);
                     newDIV.prepend(fake_acp);
@@ -219,21 +219,21 @@
 
     //方向键控制页面控件焦点移动
     function keyDown(event) {
-        var suggs = $("div.acp");                  //通过class属性值获取控件组合
-        var this_sugg = $(".acp.acp--highlight");                  //通过class属性值获取控件组合
-        var focus = document.activeElement;                 //得到处于激活状态的控件
-        var e = window.event || event;                              //获取事件
-        var key = e.keyCode;                                     //得到按下的键盘Ascii码
-        var target_input = $('#search_form_input_homepage');                                     //得到按下的键盘Ascii码
-        var this_tabindex = $(this_sugg).attr('tabindex');
-        var this_flag = 0;
-        var last_flag = 0;
+        let suggs = $("div.acp");                             //通过class属性值获取控件组合
+        let this_sugg = $(".acp.acp--highlight");             //通过class属性值获取控件组合
+        let focus = document.activeElement;                   //得到处于激活状态的控件
+        let e = window.event || event;                        //获取事件
+        let key = e.keyCode;                                  //得到按下的键盘Ascii码
+        let target_input = $('#search_form_input_homepage');  //得到按下的键盘Ascii码
+        let this_tabindex = $(this_sugg).attr('tabindex');
+        let this_flag = 0;
+        let last_flag = 0;
         if (typeof this_tabindex === typeof undefined || this_tabindex === false) {
             this_flag = 0;
         } else {
             this_flag = parseInt(this_tabindex);
         }
-        var last_tabindex = $(suggs).last().attr('tabindex');
+        let last_tabindex = $(suggs).last().attr('tabindex');
         if (typeof last_tabindex === typeof undefined || last_tabindex === false) {
             last_flag = 0;
         } else {
