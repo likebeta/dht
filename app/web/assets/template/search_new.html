@@ -125,22 +125,32 @@
             margin-bottom: 0;
         }
 
-        .result:hover {
+        .result__body:hover {
             background-color: #eee;
         }
 
         @media only screen and (min-width: 540px) {
-            .result:hover .down__link {
+            .result__body:hover .down__link {
                 display: block;
             }
         }
 
+        .result--more {
+            margin-top: 10px;
+        }
+
+        .result ul {
+            padding-top: .5em;
+            padding-bottom: 0;
+        }
+
         .result li {
             font-size: 12px;
-            line-height: 18px;
+            /*line-height: 18px;*/
             color: #666;
-            height: 18px;
-            overflow: hidden;
+            padding: 3px 0;
+            /*height: 18px;*/
+            /*overflow: hidden;*/
         }
 
         .result li i {
@@ -171,6 +181,10 @@
             display: block;
             color: #428bca;
             margin: 4px 0 0 15px;
+        }
+
+        .result__intro label {
+            margin-right: 10px;
         }
 
         .down__link {
@@ -287,7 +301,7 @@
                                 </h2>
                                 <div class="result__snippet js-result-snippet">
                                     <ul>
-                                        {% if item.files %}
+                                        {% if item.files | length > 0 %}
                                         {% for f in item.files[:3] %}
                                         <li>
                                             <i class="fa fa-file-video-o"></i> {{ f.path }}
@@ -306,10 +320,10 @@
                                     </ul>
                                 </div>
                                 <p class="result__intro">
-                                    <span>Files：</span><label>{{ item.files | length or 1}}</label>
-                                    <span>Size：</span><label>{{ Util.sizeof_fmt(item.length) }}</label>
-                                    <span>Hot：</span><label>{{ item.hit }}</label>
-                                    <span>Time：</span><label> {{ Util.calc_days(item.create_time) }} days</label>
+                                    <span>Files: </span><label>{{ item.files | length or 1}}</label>
+                                    <span>Size: </span><label>{{ Util.sizeof_fmt(item.length) }}</label>
+                                    <span>Hot: </span><label>{{ item.hit }}</label>
+                                    <span>Time: </span><label> {{ Util.calc_days(item.create_time) }} days</label>
                                     <span class="down__link">
                                     {% set magnet_link = "magnet:?xt=urn:btih:" + item.info_hash | upper %}
                                     {% set magnet_link_dn = magnet_link + "&dn=" + item.name | urlencode %}

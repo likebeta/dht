@@ -64,7 +64,6 @@ class Router(object):
             defer.returnValue(HtmlResult('307 temporary redirect'))
         else:
             result = yield DbMySql.interaction('search', self.do_search, keyword, page, 10)
-            # Logger.debug(result)
             result = yield DbMySql.interaction('dht', self.do_search_detail, result)
             html = self.render_page(result, 'search_new.html')
             defer.returnValue(html)
@@ -130,9 +129,10 @@ class Router(object):
             id_detail_map[one['id']] = one
             ids.append(str(one['id']))
 
-        sql = "SELECT id, files FROM bt WHERE id IN (%s) LIMIT %s;"
-        tst.execute(sql, (','.join(ids), len(ids)))
-        files_detail = [list(one) for one in tst.fetchall()]
+        sql = "SELECT id, files FROM bt WHERE id IN (%s);" % ','.join(ids)
+        tst.execute(sql)
+        ppp = tst.fetchall()
+        files_detail = [list(one) for one in ppp]
         for line in files_detail:
             if line[1] is not None:
                 id_detail_map[line[0]]['files'] = json.loads(line[1])
