@@ -148,64 +148,20 @@ class Router(object):
         if total == 0 or c_p < 1 or c_p > total:
             return False, [], False
 
-        prev_btn, next_btn = False, False
-        left_dot, right_dot = False, False
-        max_show, max_right, min_left = 10, c_p, c_p
-        # left
-        if c_p - 1 >= 6:
-            left_dot = True
-            rc_show = [c_p - 2, c_p - 1]
-            max_show -= 5
-            min_left -= 5
-        else:
-            rc_show = range(2, c_p)
-            max_show -= len(rc_show)
-            min_left = 2
-        rc_show.append(c_p)
-        # right
-        if total - c_p >= 6:
-            right_dot = True
-            rc_show.extend([c_p + 1, c_p + 2])
-            max_show -= 5
-            max_right += 5
-        else:
-            tmp = range(c_p + 1, total)
-            rc_show.extend(tmp)
-            max_show -= len(tmp)
-            max_right = total - 1
-
-        while max_show > 0:
-            tmp = max_show
-            if min_left > 2:
-                rc_show.insert(0, min_left)
-                min_left -= 1
-                max_show -= 1
-            if max_show > 0:
-                if max_right < total - 1:
-                    rc_show.append(max_right)
-                    max_right += 1
-                    max_show -= 1
-            if tmp == max_show:
+        # 最多显示10个页码
+        left_page = c_p - 1
+        right_page = c_p + 1
+        pages = [c_p]
+        while len(pages) < 10:
+            if left_page >= 1:
+                pages.insert(0, left_page)
+                left_page -= 1
+            if len(pages) < 10 and right_page <= total:
+                pages.append(right_page)
+                right_page += 1
+            if left_page < 1 and right_page > total:
                 break
-
-        if left_dot:
-            rc_show.insert(0, '...')
-
-        if right_dot:
-            rc_show.append('...')
-
-        if c_p != 1:
-            rc_show.insert(0, 1)
-        if c_p != total:
-            rc_show.append(total)
-
-        if c_p > 1:
-            prev_btn = True
-
-        if c_p < total:
-            next_btn = True
-
-        return prev_btn, rc_show, next_btn
+        return c_p > 1, pages, c_p < total
 
 
 Router = Router()
