@@ -4,24 +4,31 @@
         itemscope="" itemtype="//schema.org/SearchResultsPage" lang="zh-cn">
 
 <head>
+    <title>Search {{ info.keyword }} Torrents, Magnet</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-
-    <title>Search {{ info.keyword }} Torrents, Magnet</title>
-    <link rel="stylesheet" href="/static/css/s1764.css" type="text/css">
-    <link rel="stylesheet" href="/static/css/r1763.css" type="text/css">
     <meta name="robots" content="noindex,nofollow">
     <meta name="referrer" content="origin">
     <meta name="apple-mobile-web-app-title" content="weather">
-    <link rel="shortcut icon" href="/static/img/doge_ico.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="HandheldFriendly" content="true">
     <meta name="apple-mobile-web-app-capable" content="no">
-    <link title="DogeDoge" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
+    <link rel="shortcut icon" href="/static/img/doge_ico.png" type="image/png">
+    <link title="BTKU" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
+    <link rel="stylesheet" href="/static/css/s1764.css" type="text/css">
+    <link rel="stylesheet" href="/static/css/r1763.css" type="text/css">
     <link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css"/>
-    <link href="/static/css/lato-open-sans.css" rel="stylesheet">
-    <script src="/static/js/jquery.min.js"></script>
+    <link rel="stylesheet" href="//fonts.loli.net/css?family=Lato|Open+Sans&display=swap" type="text/css">
+    <link href="//cdnjs.loli.net/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css" rel="stylesheet">
+    <script src="//cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+    <script src="//cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="//cdnjs.loli.net/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.js"></script>
     <style>
+        body {
+            min-width: 320px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+
         .red-area {
             width: 100%;
             height: 5px;
@@ -109,106 +116,72 @@
             display: block;
         }
 
-        #find_ipt {
-            width: 1100px;
-            height: 80px;
-            margin: 0 auto;
+        .result--more {
+            width: 150px;
+            display: inline-block;
         }
 
-        #find_ipt ul {
-            float: left;
-            margin: 20px 0 0 10px;
+        .result {
+            margin-bottom: 0;
+        }
+
+        .result:hover {
+            background-color: #eee;
+        }
+
+        @media only screen and (min-width: 540px) {
+            .result:hover .down__link {
+                display: block;
+            }
+        }
+
+        .result li {
+            font-size: 12px;
+            line-height: 18px;
+            color: #666;
+            height: 18px;
             overflow: hidden;
         }
 
-        #find_ipt ul li {
-            float: left;
+        .result li i {
+            color: #666;
         }
 
-        #find_ipt ul li a {
+        .result__a, .result__a:visited, .result__a:visited:hover {
+            color: #0000cc;
+        }
+
+        .result__a strong {
+            font-style: normal;
+            color: #c00;
+        }
+
+        .result__intro {
+            height: 24px;
+            color: #888;
+            font-size: 12px;
+            line-height: 24px;
+        }
+
+        .result__intro a {
             float: left;
-            line-height: 40px;
+            height: 23px;
             text-align: center;
+            line-height: 23px;
             display: block;
+            color: #428bca;
+            margin: 4px 0 0 15px;
         }
 
-        #find_ipt ul li a:hover {
+        .down__link {
+            position: relative;
+            float: right;
+            /*margin-right: 25px;*/
+            display: none;
+        }
+
+        .down__link a {
             text-decoration: none;
-        }
-
-        #div1 ul {
-            float: left;
-        }
-
-        #div1 ul li {
-            float: left;
-        }
-
-        #div1 ul li a {
-            float: left;
-            display: block;
-            text-align: center;
-            line-height: 38px;
-            margin-right: 10px;
-            color: #333;
-        }
-
-        .otherPage a {
-            width: 36px;
-            height: 36px;
-            padding: 2px;
-        }
-
-        .otherPage a:hover {
-            background: #f9f9f9;
-            text-decoration: none;
-        }
-
-        .nowPage a {
-            width: 36px;
-            height: 36px;
-            border: 2px solid #ededed;
-        }
-
-        .nowPage a:hover {
-            background: #f4f4f4;
-            text-decoration: none;
-        }
-
-        .nextPage a {
-            width: 30px;
-            height: 30px;
-            margin-top: 5px;
-            background: url(/static/img/sw_mg_l_4c_ly_cn.png) -169px 0;
-        }
-
-        .nextPage a:hover {
-            background: url(/static/img/sw_mg_l_4c_ly_cn.png) -201px 0;
-        }
-
-        .lastPage a {
-            width: 30px;
-            height: 30px;
-            margin-top: 5px;
-            background: url(/static/img/sw_mg_l_4c_ly_cn.png) -233px 0;
-        }
-
-        .lastPage a:hover {
-            background: url(/static/img/sw_mg_l_4c_ly_cn.png) -265px 0;
-        }
-
-        .in_result_banner {
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
-            width: 106px;
-            height: 65px;
-            margin: 2px 6px 2px 0px;
-            float: left;
-            border-radius: 4px;
-            line-height: 36px;
-            overflow: hidden;
-            text-align: center;
         }
 
         .in_result_banner img {
@@ -216,10 +189,10 @@
             display: inline;
         }
 
-        .resultCounter {
+        #result-counter {
             color: #999;
             float: right;
-            padding: 5px 10px 15px 10px;
+            padding-right: 10px;
         }
 
         .userback-button-container .userback-button[wstyle="circle"] {
@@ -254,14 +227,12 @@
         <div id="header" class="header cw">
             <div class="header__search-wrap">
                 <a tabindex="-1" href="/" class="header__logo-wrap js-header-logo"><span
-                        class="header__logo js-logo-ddg">DogeDoge</span></a>
+                        class="header__logo js-logo-ddg">BTKU</span></a>
                 <div class="header__content header__search">
-                    <form id="search_form" class="search--adv search--header js-search-form has-text" name="x"
-                          action="/q?" method="GET">
+                    <form id="search_form" class="search--adv search--header js-search-form has-text">
                         <input type="text" name="s" tabindex="1" autocomplete="off" id="search_form_input"
                                class="search__input--adv js-search-input" value="{{ info.keyword }}"
-                               autocapitalize="off"
-                               autocorrect="off">
+                               autocapitalize="off" autocorrect="off">
                         <input id="search_button" class="search__button js-search-button" type="submit" tabindex="2"
                                value="S">
                         <input id="search_form_input_clear" class="search__clear js-search-clear" type="button"
@@ -271,13 +242,16 @@
                     </form>
                 </div>
             </div>
-            <div id="duckbar" class="zcm-wrap zcm-wrap--header is-noscript-hidden">
+            <div class="zcm-wrap zcm-wrap--header is-noscript-hidden">
                 <div class="zcm">
-                    <ul class="zcm__menu zcm__constant has-zci" id="duckbar_static">
-                        <li class="zcm__item"><a data-zci-link="web"
-                                                 class="zcm__link js-zci-link js-zci-link--web is-active"
-                                                 href="javascript:void(0);">Web</a>
+                    <ul class="zcm__menu zcm__constant has-zci">
+                        <li class="zcm__item">
+                            <a data-zci-link="web" class="zcm__link js-zci-link js-zci-link--web is-active"
+                               href="javascript:void(0);">Torrent</a>
                         </li>
+                    </ul>
+                    <ul class="zcm__menu zcm__dynamic has-zci" id="result-counter">
+                        <li class="zcm__item">About {{ Util.format_size(info.total) }} results</li>
                     </ul>
                 </div>
             </div>
@@ -293,10 +267,10 @@
         <div class="cw">
             <div id="links_wrapper" class="serp__results js-serp-results">
                 <div class="results--main">
-                    <div class="search-filters-wrap">
+                    <div class="search-filters-wrap" style="display: none">
                         <div class="js-search-filters search-filters">
-                            <div id="chinese-only" class="dropdown dropdown--region is-active has-inactive-region">
-                            </div>
+                            <div id="chinese-only"
+                                 class="dropdown dropdown--region is-active has-inactive-region"></div>
                             <div class="resultCounter">About {{ Util.format_size(info.total) }} results</div>
                         </div>
                     </div>
@@ -331,12 +305,12 @@
                                         {% endif %}
                                     </ul>
                                 </div>
-                                <p class="resultsIntroduction">
+                                <p class="result__intro">
                                     <span>Files：</span><label>{{ item.files | length or 1}}</label>
                                     <span>Size：</span><label>{{ Util.sizeof_fmt(item.length) }}</label>
                                     <span>Hot：</span><label>{{ item.hit }}</label>
-                                    <span>Create Time：</span><label> {{ Util.calc_days(item.create_time) }} days</label>
-                                    <span class="downLink">
+                                    <span>Time：</span><label> {{ Util.calc_days(item.create_time) }} days</label>
+                                    <span class="down__link">
                                     {% set magnet_link = "magnet:?xt=urn:btih:" + item.info_hash | upper %}
                                     {% set magnet_link_dn = magnet_link + "&dn=" + item.name | urlencode %}
                                         <a rel="nofollow" href="{{ magnet_link_dn }}"><i class="fa fa-magnet"></i> Magnet</a>
@@ -347,94 +321,113 @@
                             </div>
                         </div>
                         {% endfor %}
-                        <div class="result result--more">
-                            <div id="div1">
-                                <ul id="nextPage">
-                                    {% if info.pages.prev_btn %}
-                                    <li class="lastPage"><a
-                                            href="/q?s={{ encode_keyword }}&p={{ info.pages.page - 1 }}"></a></li>
-                                    {% endif %}
-                                    {% for page in info.pages.pages %}
-                                    {% if page == '...' %}
-                                    <li class='otherPage'><a>...</a></li>
-                                    {% elif page == info.pages.page %}
-                                    <li class='nowPage'><a>{{ page }}</a></li>
-                                    {% else %}
-                                    <li class="otherPage"><a href="/q?s={{ encode_keyword }}&p={{ page }}">{{ page
-                                        }}</a></li>
-                                    {% endif %}
-                                    {% endfor %}
-                                    {% if info.pages.next_btn %}
-                                    <li class="nextPage"><a
-                                            href="/q?s={{ encode_keyword }}&p={{ info.pages.page + 1 }}"></a></li>
-                                    {% endif %}
-                                </ul>
-                            </div>
+                        {% if info.pages.prev_btn %}
+                        <div class="result result--more" style="float:left;">
+                            <a href="/q?s={{ encode_keyword }}&p={{ info.pages.page - 1 }}"
+                               class="result--more__btn btn btn--full">上一页</a>
                         </div>
+                        {% endif %}
+                        {% if info.pages.next_btn %}
+                        <div class="result result--more" style="float:right;">
+                            <a href="/q?s={{ encode_keyword }}&p={{ info.pages.page + 1 }}"
+                               class="result--more__btn btn btn--full">下一页</a>
+                        </div>
+                        {% endif %}
                     </div>
-                </div>
-                <div class="results--sidebar js-results-sidebar">
-                    <div class="sidebar-modules js-sidebar-modules">
-                    </div>
-                    <div class="js-sidebar-ads">
+                    <div class="results--sidebar js-results-sidebar">
+                        <div class="sidebar-modules js-sidebar-modules">
+                        </div>
+                        <div class="js-sidebar-ads">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <ul id="toolBar" class="toolBar-wrap">
+            <li>
+                <a id="gotopTool" onclick="$('html,body').animate({scrollTop: '0px'}, 800);" class="gotop barBox"
+                   href="javascript:void(0);" title="goto top">
+                    <i class="fa fa-arrow-circle-up"></i>
+                </a>
+            </li>
+        </ul>
     </div>
-    <ul id="toolBar" class="toolBar-wrap">
-        <li>
-            <a id="gotopTool" onclick="$('html,body').animate({scrollTop: '0px'}, 800);" class="gotop barBox"
-               href="javascript:void(0);" title="goto top">
-                <i class="fa fa-arrow-circle-up"></i>
-            </a>
-        </li>
-    </ul>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
         $('#search_form_input').on('input propertychange', function () {
             do_sugg(this);
-        });
-        $('#search_form_input').focus(function () {
+        }).focus(function () {
             $('#search_form').addClass("search--focus");
             $('html').addClass("has-search-focus");
             do_sugg(this);
         });
+
         $('#search_form_input_clear').click(function () {
             $('#search_form_input').val('').focus();
             $('#search_form').removeClass("has-text");
             $("#search__autocomplete").hide();
         });
+
+        $("#search_form").hover(function () {
+            $(this).addClass("search--hover");
+        }, function () {
+            $(this).removeClass("search--hover");
+        }).submit(function (e) {
+            e.preventDefault();
+            let q = $("#search_form_input");
+            let kw = q.val();
+            if (!kw) {
+                q.focus();
+                return false
+            }
+            window.location = "q?s=" + encodeURIComponent(kw);
+            return false
+        });
+
         $(document).mouseup(function (e) {
             let _con = $('#search_form_input,#search__autocomplete');   // 设置目标区域
             if (!_con.is(e.target) && _con.has(e.target).length === 0) { // Mark 1
                 $("#search__autocomplete").hide();
             }
-        });
-        $("#search_form").hover(function () {
-            $(this).addClass("search--hover");
-        }, function () {
-            $(this).removeClass("search--hover");
-        });
-        $(document).keydown(function (event) {
+        }).keydown(function (event) {
             if ($('#search__autocomplete').is(':visible')) {
                 keyDown(event);
             }
         });
+
+        let clipboard = new ClipboardJS('.clip_button');
+        clipboard.on('success', function (e) {
+            e.clearSelection();
+            showCopyAlert('success', 'Copied successfully!');
+        });
+        clipboard.on('error', function (e) {
+            showCopyAlert('error', 'Copied abortively!');
+        });
+
+        let header_spaces_css = {
+            height: $('#header_wrapper').outerHeight(true)
+        };
+        $("#header_spaces").css(header_spaces_css);
+        $(window).bind("scroll", function () {
+            let scrollTop = $(window).scrollTop();
+            if (scrollTop > 100) {
+                $("#toolBar").show();
+            } else {
+                $("#toolBar").hide();
+            }
+        });
     });
-    let header_spaces_css = {
-        height: $('#header_wrapper').outerHeight(true)
-    };
-    $("#header_spaces").css(header_spaces_css);
-    $(window).bind("scroll", function () {
-        let scrollTop = $(window).scrollTop();
-        if (scrollTop > 100) {
-            $("#toolBar").show();
-        } else {
-            $("#toolBar").hide();
-        }
-    });
+
+    function showCopyAlert(type, title) {
+        Swal.fire({
+            position: 'center',
+            type: type,
+            title: title,
+            showConfirmButton: false,
+            timer: 1500
+        })
+    }
 
     function do_sugg(obj) {
         let count = $(obj).val().length;

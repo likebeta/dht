@@ -14,17 +14,22 @@
 <!--<![endif]-->
 
 <head>
+    <title>Free Torrent Search</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8;charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1">
     <meta name="HandheldFriendly" content="true">
     <link rel="stylesheet" href="/static/css/s1764.css" type="text/css">
     <link rel="stylesheet" href="/static/css/o1764.css" type="text/css">
-    <link href="/static/css/lato-open-sans.css" rel="stylesheet">
     <link rel="shortcut icon" href="/static/img/doge_ico.png" type="image/png">
-    <title>Free Torrent Search</title>
-    <link title="DogeDoge" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
+    <link rel="stylesheet" href="//fonts.loli.net/css?family=Lato|Open+Sans&display=swap" type="text/css">
+    <link title="BTKU" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
+    <script src="//cdnjs.loli.net/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
+        body {
+            min-width: 320px;
+        }
+
         .red-area {
             width: 100%;
             height: 5px;
@@ -60,7 +65,6 @@
 
 <body class="page-index body--home">
 <div class="red-area"></div>
-<script src="/static/js/jquery.min.js"></script>
 <div class="site-wrapper site-wrapper--home js-site-wrapper">
     <div class="header-wrap--home js-header-wrap">
         <div class="header--aside js-header-aside">
@@ -75,8 +79,7 @@
                     <div class="logo_homepage"></div>
                 </div>
                 <div class="search-wrap--home">
-                    <form id="search_form_homepage" class="search--home js-search-form search--adv search--focus"
-                          name="x" method="GET" action="/q" _lpchecked="1">
+                    <form id="search_form_homepage" class="search--home js-search-form search--adv search--focus">
                         <input id="search_form_input_homepage" class="js-search-input search__input--adv"
                                type="text" autocomplete="off" name="s" tabindex="1" value="" autocapitalize="off"
                                autocorrect="off">
@@ -112,9 +115,9 @@
                     isAndroid: ua.indexOf('Android') > -1 || ua.indexOf('Linux') > -1, //android终端或者uc浏览器
                     iPhone: ua.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
                     iPad: ua.indexOf('iPad') > -1, //是否iPad
-                    isWebApp: ua.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
+                    isWebApp: ua.indexOf('Safari') === -1, //是否web应该程序，没有头部与底部
                     isWeiXin: ua.indexOf('MicroMessenger') > -1, //是否微信
-                    isQQ: ua.match(/\sQQ/i) == " qq" //是否QQ
+                    isQQ: ua.match(/\sQQ/i) //是否QQ
                 };
             }(),
             os: function () {
@@ -173,6 +176,19 @@
             }
 
         });
+    });
+
+
+    $("#search_form_homepage").submit(function (e) {
+        e.preventDefault();
+        let q = $("#search_form_input_homepage");
+        let kw = q.val();
+        if (!kw) {
+            q.focus();
+            return false
+        }
+        window.location = "q?s=" + encodeURIComponent(kw);
+        return false
     });
 
     function do_sugg(obj) {

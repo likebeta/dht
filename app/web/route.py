@@ -108,18 +108,17 @@ class Router(object):
             'total': int(tmp['total_found']),
             'keyword': keyword,
         }
-        total_pages = info['total'] / count
+        total_page = info['total'] / count
         if info['total'] % count != 0:
-            total_pages += 1
-        if total_pages > 100:
-            total_pages = 100
-        prev_btn, rc_show, next_btn = self.calc_pages(total_pages, page)
+            total_page += 1
+        if total_page > 100:
+            total_page = 100
+
         pages = {
-            'total': total_pages,
+            'total': total_page,
             'page': page,
-            'prev_btn': prev_btn,
-            'next_btn': next_btn,
-            'pages': rc_show
+            'prev_btn': page > 1,
+            'next_btn': page < total_page,
         }
         info['pages'] = pages
         return info
@@ -159,69 +158,6 @@ class Router(object):
         except:
             pass
         return dict(keyword=keyword, **detail)
-
-    def calc_pages(self, total, c_p):
-        if total == 0 or c_p < 1 or c_p > total:
-            return False, [], False
-
-        prev_btn, next_btn = False, False
-        left_dot, right_dot = False, False
-        max_show, max_right, min_left = 10, c_p, c_p
-        # left
-        if c_p - 1 >= 6:
-            left_dot = True
-            rc_show = [c_p - 2, c_p - 1]
-            max_show -= 5
-            min_left -= 5
-        else:
-            rc_show = range(2, c_p)
-            max_show -= len(rc_show)
-            min_left = 2
-        rc_show.append(c_p)
-        # right
-        if total - c_p >= 6:
-            right_dot = True
-            rc_show.extend([c_p + 1, c_p + 2])
-            max_show -= 5
-            max_right += 5
-        else:
-            tmp = range(c_p + 1, total)
-            rc_show.extend(tmp)
-            max_show -= len(tmp)
-            max_right = total - 1
-
-        while max_show > 0:
-            tmp = max_show
-            if min_left > 2:
-                rc_show.insert(0, min_left)
-                min_left -= 1
-                max_show -= 1
-            if max_show > 0:
-                if max_right < total - 1:
-                    rc_show.append(max_right)
-                    max_right += 1
-                    max_show -= 1
-            if tmp == max_show:
-                break
-
-        if left_dot:
-            rc_show.insert(0, '...')
-
-        if right_dot:
-            rc_show.append('...')
-
-        if c_p != 1:
-            rc_show.insert(0, 1)
-        if c_p != total:
-            rc_show.append(total)
-
-        if c_p > 1:
-            prev_btn = True
-
-        if c_p < total:
-            next_btn = True
-
-        return prev_btn, rc_show, next_btn
 
 
 Router = Router()
