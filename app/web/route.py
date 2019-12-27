@@ -115,8 +115,8 @@ class Router(object):
             id_detail_map[one['id']] = one
             ids.append(str(one['id']))
 
-        sql = "SELECT id, files FROM bt WHERE id IN (%s) LIMIT %s;"
-        tst.execute(sql, (','.join(ids), len(ids)))
+        sql = "SELECT id, files FROM bt WHERE id IN (%s) LIMIT %s;" % ','.join(ids)
+        tst.execute(sql)
         files_detail = [list(one) for one in tst.fetchall()]
         for line in files_detail:
             if line[1] is not None:
