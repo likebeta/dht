@@ -9,8 +9,11 @@ import jinja2
 from util.tool import Util
 from util.log import Logger
 from util.db_mysql import DbMySql
+from twisted.web import util
+from twisted.web import http
 from twisted.internet import defer
 from util.exceptions import NotFoundException
+from util.response import HtmlResult
 from util.response import http_response_handle
 
 
@@ -37,6 +40,11 @@ class Router(object):
         return tpl.render(info=result).encode('utf-8')
 
     @http_response_handle(response='html')
+    def render_error_page(self, code, desc):
+        tpl = self.env.get_template("error.html", globals={'Util': Util})
+        return tpl.render(info={'code': code, 'desc': desc}).encode('utf-8')
+
+    @http_response_handle(response='html')
     def index(self, args, request):
         tpl = self.env.get_template('index_new.html', globals={'Util': Util})
         return tpl.render().encode('utf-8')
@@ -50,11 +58,15 @@ class Router(object):
         elif page > 100:
             page = 100
 
-        if keyword:
+        if not keyword:
+            util.redirectTo('/', request)
+            request.setResponseCode(http.TEMPORARY_REDIRECT)
+            defer.returnValue(HtmlResult('307 temporary redirect'))
+        else:
             result = yield DbMySql.interaction('search', self.do_search, keyword, page, 10)
             # Logger.debug(result)
             result = yield DbMySql.interaction('dht', self.do_search_detail, result)
-            html = self.render_page(result, 'search.html')
+            html = self.render_page(result, 'search_new.html')
             defer.returnValue(html)
 
     @defer.inlineCallbacks
@@ -63,7 +75,11 @@ class Router(object):
         tid = int(args.get('i', 0))
         if tid <= 0:
             tid = 1
-        if keyword:
+        if not keyword:
+            util.redirectTo('/', request)
+            request.setResponseCode(http.TEMPORARY_REDIRECT)
+            defer.returnValue(http_response_handle())
+        else:
             result = yield DbMySql.interaction('dht', self.do_detail, keyword, tid)
             html = self.render_page(result, 'detail.html')
             defer.returnValue(html)

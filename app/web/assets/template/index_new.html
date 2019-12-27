@@ -113,7 +113,7 @@
                     iPhone: ua.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
                     iPad: ua.indexOf('iPad') > -1, //是否iPad
                     isWebApp: ua.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
-                    isWeixin: ua.indexOf('MicroMessenger') > -1, //是否微信
+                    isWeiXin: ua.indexOf('MicroMessenger') > -1, //是否微信
                     isQQ: ua.match(/\sQQ/i) == " qq" //是否QQ
                 };
             }(),
@@ -150,7 +150,6 @@
             }
         });
         $('#search_form_input_homepage').focus(function () {
-            //			$("#search__autocomplete").show();
             do_sugg(this);
         });
         $('#search_form_input_clear').click(function () {
@@ -214,7 +213,7 @@
                             $(this).click(function () {
                                 $('#search_form_input_homepage').val($(this).text());
                                 auto_div.hide();
-                                document.getElementById('search_form_homepage').submit();
+                                $('#search_form_homepage').submit();
                             })
                         },
                         mouseleave: function () {

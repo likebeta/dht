@@ -37,8 +37,8 @@ class ServerHttpProtocol(BasicHttpProtocol):
             return
         Logger.exception()
 
-        mo = Router.render_page({'code': 500, 'desc': 'System Error'}, 'error.html')
-        body, content_type = http_response(request, mo)
+        mo = Router.render_error_page(500, 'System Error')
+        body, content_type = http_response(request, mo, 500)
         Logger.debug('<====', request.path, content_type, repr(body))
 
     def make_task(self, request):
@@ -56,18 +56,18 @@ class ServerHttpProtocol(BasicHttpProtocol):
 
             body, content_type = http_response(request, mo)
         except SystemException, e:
-            mo = Router.render_page({'code': 500, 'desc': 'System Error'}, 'error.html')
-            body, content_type = http_response(request, mo)
+            mo = Router.render_error_page(500, 'System Error')
+            body, content_type = http_response(request, mo, 500)
         except NotFoundException, e:
-            mo = Router.render_page({'code': 404, 'desc': 'Not Found'}, 'error.html')
-            body, content_type = http_response(request, mo)
+            mo = Router.render_error_page(404, 'Not Found')
+            body, content_type = http_response(request, mo, 404)
         except ForbiddenException, e:
-            mo = Router.render_page({'code': 403, 'desc': 'Forbidden Access'}, 'error.html')
-            body, content_type = http_response(request, mo)
+            mo = Router.render_error_page(403, 'Forbidden Access')
+            body, content_type = http_response(request, mo, 403)
         except Exception, e:
             Logger.exception()
-            mo = Router.render_page({'code': 500, 'desc': 'System Error'}, 'error.html')
-            body, content_type = http_response(request, mo)
+            mo = Router.render_error_page(500, 'System Error')
+            body, content_type = http_response(request, mo, 500)
         Logger.debug('<====', request.path, content_type)
 
 

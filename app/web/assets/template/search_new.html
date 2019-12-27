@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html
+        class="has-zcm no-touch opacity csstransforms3d csstransitions svg cssfilters is-not-mobile-device full-urls has-footer"
+        itemscope="" itemtype="//schema.org/SearchResultsPage" lang="zh-cn">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+
+    <title>Search {{ info.keyword }} Torrents, Magnet</title>
+    <link rel="stylesheet" href="/static/css/s1764.css" type="text/css">
+    <link rel="stylesheet" href="/static/css/r1763.css" type="text/css">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="referrer" content="origin">
+    <meta name="apple-mobile-web-app-title" content="weather">
+    <link rel="shortcut icon" href="/static/img/doge_ico.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="HandheldFriendly" content="true">
+    <meta name="apple-mobile-web-app-capable" content="no">
+    <link title="DogeDoge" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
+    <link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css"/>
+    <link href="/static/css/lato-open-sans.css" rel="stylesheet">
+    <script src="/static/js/jquery.min.js"></script>
+    <style>
+        .red-area {
+            width: 100%;
+            height: 5px;
+            background: #c9481c;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999999;
+        }
+
+        .toolBar-wrap {
+            position: fixed;
+            bottom: 70px;
+            right: 10%;
+            display: none;
+            z-index: 999;
+        }
+
+        @media only screen and (min-width: 1000px) {
+            .toolBar-wrap {
+                right: 0;
+                left: 900px;
+            }
+        }
+
+        #toolBar a {
+            text-decoration: none;
+        }
+
+        #toolBar .barBox {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            font-size: 24px;
+            line-height: 48px;
+            color: #555;
+            text-align: center;
+        }
+
+        #toolBar .barBox .fa {
+            font-size: 48px;
+            line-height: 48px;
+        }
+
+        #toolBar .barBox i {
+            display: block;
+            color: #bebebe;
+        }
+
+        #toolBar .barBox i:hover {
+            color: #000;
+        }
+
+        #toolBar .hidemenu {
+            position: absolute;
+            top: -20px;
+            left: -110px;
+            display: none;
+            padding-right: 10px;
+        }
+
+        #toolBar .hidemenu .box_shadow {
+            width: 100px;
+            background: #F8FEFC;
+        }
+
+        #toolBar .hidemenu a {
+            display: block;
+            padding: 8px;
+            height: 20px;
+            line-height: 20px;
+            border-top: 1px solid #e9e9e9;
+            color: #999;
+        }
+
+        #toolBar .box_shadow:hover .hidemenu :hover {
+            display: block;
+            color: #000;
+        }
+
+        #toolBar .box_shadow:hover .hidemenu {
+            display: block;
+        }
+
+        #find_ipt {
+            width: 1100px;
+            height: 80px;
+            margin: 0 auto;
+        }
+
+        #find_ipt ul {
+            float: left;
+            margin: 20px 0 0 10px;
+            overflow: hidden;
+        }
+
+        #find_ipt ul li {
+            float: left;
+        }
+
+        #find_ipt ul li a {
+            float: left;
+            line-height: 40px;
+            text-align: center;
+            display: block;
+        }
+
+        #find_ipt ul li a:hover {
+            text-decoration: none;
+        }
+
+        #div1 ul {
+            float: left;
+        }
+
+        #div1 ul li {
+            float: left;
+        }
+
+        #div1 ul li a {
+            float: left;
+            display: block;
+            text-align: center;
+            line-height: 38px;
+            margin-right: 10px;
+            color: #333;
+        }
+
+        .otherPage a {
+            width: 36px;
+            height: 36px;
+            padding: 2px;
+        }
+
+        .otherPage a:hover {
+            background: #f9f9f9;
+            text-decoration: none;
+        }
+
+        .nowPage a {
+            width: 36px;
+            height: 36px;
+            border: 2px solid #ededed;
+        }
+
+        .nowPage a:hover {
+            background: #f4f4f4;
+            text-decoration: none;
+        }
+
+        .nextPage a {
+            width: 30px;
+            height: 30px;
+            margin-top: 5px;
+            background: url(/static/img/sw_mg_l_4c_ly_cn.png) -169px 0;
+        }
+
+        .nextPage a:hover {
+            background: url(/static/img/sw_mg_l_4c_ly_cn.png) -201px 0;
+        }
+
+        .lastPage a {
+            width: 30px;
+            height: 30px;
+            margin-top: 5px;
+            background: url(/static/img/sw_mg_l_4c_ly_cn.png) -233px 0;
+        }
+
+        .lastPage a:hover {
+            background: url(/static/img/sw_mg_l_4c_ly_cn.png) -265px 0;
+        }
+
+        .in_result_banner {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            width: 106px;
+            height: 65px;
+            margin: 2px 6px 2px 0px;
+            float: left;
+            border-radius: 4px;
+            line-height: 36px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .in_result_banner img {
+            border-radius: 4px;
+            display: inline;
+        }
+
+        .resultCounter {
+            color: #999;
+            float: right;
+            padding: 5px 10px 15px 10px;
+        }
+
+        .userback-button-container .userback-button[wstyle="circle"] {
+            bottom: 50px !important;
+        }
+
+        #header_wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        #header_spaces {
+            height: 101px;
+        }
+
+        .b_class {
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            backdrop-filter: saturate(180%) blur(20px);
+            background: rgba(250, 250, 250, 0.8);
+        }
+    </style>
+</head>
+{% set encode_keyword = info.keyword|urlencode %}
+<body class="body--serp">
+<div class="red-area"></div>
+<div class="site-wrapper js-site-wrapper" style="min-height: 756px;">
+    <div id="header_wrapper" class="header-wrap b_class">
+        <div class="welcome-wrap js-welcome-wrap">
+        </div>
+        <div id="header" class="header cw">
+            <div class="header__search-wrap">
+                <a tabindex="-1" href="/" class="header__logo-wrap js-header-logo"><span
+                        class="header__logo js-logo-ddg">DogeDoge</span></a>
+                <div class="header__content header__search">
+                    <form id="search_form" class="search--adv search--header js-search-form has-text" name="x"
+                          action="/q?" method="GET">
+                        <input type="text" name="s" tabindex="1" autocomplete="off" id="search_form_input"
+                               class="search__input--adv js-search-input" value="{{ info.keyword }}"
+                               autocapitalize="off"
+                               autocorrect="off">
+                        <input id="search_button" class="search__button js-search-button" type="submit" tabindex="2"
+                               value="S">
+                        <input id="search_form_input_clear" class="search__clear js-search-clear" type="button"
+                               tabindex="3" value="X">
+                        <div id="search__autocomplete" class="search__autocomplete"
+                             style="position: absolute; display: none;"></div>
+                    </form>
+                </div>
+            </div>
+            <div id="duckbar" class="zcm-wrap zcm-wrap--header is-noscript-hidden">
+                <div class="zcm">
+                    <ul class="zcm__menu zcm__constant has-zci" id="duckbar_static">
+                        <li class="zcm__item"><a data-zci-link="web"
+                                                 class="zcm__link js-zci-link js-zci-link--web is-active"
+                                                 href="javascript:void(0);">Web</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="header_spaces" style="height: 101px;"></div>
+    <div id="vertical_wrapper" class="verticals">
+    </div>
+    <div id="web_content_wrapper" class="content-wrap">
+        <div class="serp__top-right js-serp-top-right">
+        </div>
+        <div class="serp__bottom-right js-serp-bottom-right"></div>
+        <div class="cw">
+            <div id="links_wrapper" class="serp__results js-serp-results">
+                <div class="results--main">
+                    <div class="search-filters-wrap">
+                        <div class="js-search-filters search-filters">
+                            <div id="chinese-only" class="dropdown dropdown--region is-active has-inactive-region">
+                            </div>
+                            <div class="resultCounter">About {{ Util.format_size(info.total) }} results</div>
+                        </div>
+                    </div>
+
+                    <div id="links" class="results js-results">
+                        {% for item in info.list %}
+                        <div class="result results_links_deep highlight_d result--url-above-snippet">
+                            <div class="result__body links_main links_deep">
+                                <h2 class="result__title">
+                                    <a class="result__a" rel="noopener" title="{{ item.name }}"
+                                       href="/d?i={{ item.id }}&s={{ encode_keyword }}" target="_blank">
+                                        {{ Util.highlight_words(item.name, info.keyword) }}
+                                    </a>
+                                </h2>
+                                <div class="result__snippet js-result-snippet">
+                                    <ul>
+                                        {% if item.files %}
+                                        {% for f in item.files[:3] %}
+                                        <li>
+                                            <i class="fa fa-file-video-o"></i> {{ f.path }}
+                                            <span style="color:#999">{{ Util.sizeof_fmt(f.length) }}</span>
+                                        </li>
+                                        {% endfor %}
+                                        {% if item.files | length > 3 %}
+                                        <li>....</li>
+                                        {% endif %}
+                                        {% else %}
+                                        <li>
+                                            <i class="fa fa-file-video-o"></i> {{ item.name }}
+                                            <span style="color:#999">{{ Util.sizeof_fmt(item.length) }}</span>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                                <p class="resultsIntroduction">
+                                    <span>Files：</span><label>{{ item.files | length or 1}}</label>
+                                    <span>Size：</span><label>{{ Util.sizeof_fmt(item.length) }}</label>
+                                    <span>Hot：</span><label>{{ item.hit }}</label>
+                                    <span>Create Time：</span><label> {{ Util.calc_days(item.create_time) }} days</label>
+                                    <span class="downLink">
+                                    {% set magnet_link = "magnet:?xt=urn:btih:" + item.info_hash | upper %}
+                                    {% set magnet_link_dn = magnet_link + "&dn=" + item.name | urlencode %}
+                                        <a rel="nofollow" href="{{ magnet_link_dn }}"><i class="fa fa-magnet"></i> Magnet</a>
+                                        <a rel="nofollow" data-clipboard-text="{{ magnet_link_dn }}" class="clip_button"
+                                           href="javascript:void(0)"><i class="fa fa-paper-plane-o"></i> Copy</a>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="result result--more">
+                            <div id="div1">
+                                <ul id="nextPage">
+                                    {% if info.pages.prev_btn %}
+                                    <li class="lastPage"><a
+                                            href="/q?s={{ encode_keyword }}&p={{ info.pages.page - 1 }}"></a></li>
+                                    {% endif %}
+                                    {% for page in info.pages.pages %}
+                                    {% if page == '...' %}
+                                    <li class='otherPage'><a>...</a></li>
+                                    {% elif page == info.pages.page %}
+                                    <li class='nowPage'><a>{{ page }}</a></li>
+                                    {% else %}
+                                    <li class="otherPage"><a href="/q?s={{ encode_keyword }}&p={{ page }}">{{ page
+                                        }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% if info.pages.next_btn %}
+                                    <li class="nextPage"><a
+                                            href="/q?s={{ encode_keyword }}&p={{ info.pages.page + 1 }}"></a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="results--sidebar js-results-sidebar">
+                    <div class="sidebar-modules js-sidebar-modules">
+                    </div>
+                    <div class="js-sidebar-ads">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul id="toolBar" class="toolBar-wrap">
+        <li>
+            <a id="gotopTool" onclick="$('html,body').animate({scrollTop: '0px'}, 800);" class="gotop barBox"
+               href="javascript:void(0);" title="goto top">
+                <i class="fa fa-arrow-circle-up"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#search_form_input').on('input propertychange', function () {
+            do_sugg(this);
+        });
+        $('#search_form_input').focus(function () {
+            $('#search_form').addClass("search--focus");
+            $('html').addClass("has-search-focus");
+            do_sugg(this);
+        });
+        $('#search_form_input_clear').click(function () {
+            $('#search_form_input').val('').focus();
+            $('#search_form').removeClass("has-text");
+            $("#search__autocomplete").hide();
+        });
+        $(document).mouseup(function (e) {
+            let _con = $('#search_form_input,#search__autocomplete');   // 设置目标区域
+            if (!_con.is(e.target) && _con.has(e.target).length === 0) { // Mark 1
+                $("#search__autocomplete").hide();
+            }
+        });
+        $("#search_form").hover(function () {
+            $(this).addClass("search--hover");
+        }, function () {
+            $(this).removeClass("search--hover");
+        });
+        $(document).keydown(function (event) {
+            if ($('#search__autocomplete').is(':visible')) {
+                keyDown(event);
+            }
+        });
+    });
+    let header_spaces_css = {
+        height: $('#header_wrapper').outerHeight(true)
+    };
+    $("#header_spaces").css(header_spaces_css);
+    $(window).bind("scroll", function () {
+        let scrollTop = $(window).scrollTop();
+        if (scrollTop > 100) {
+            $("#toolBar").show();
+        } else {
+            $("#toolBar").hide();
+        }
+    });
+
+    function do_sugg(obj) {
+        let count = $(obj).val().length;
+        let auto_div = $("#search__autocomplete");
+        if (count > 0) {
+            $('#search_form').addClass("has-text");
+            $.ajax({
+                cache: true,
+                async: true,
+                url: "https://suggestion.baidu.com/su?wd=" + $(obj).val(),
+                dataType: "jsonp",          //指定服务器返回的数据类型
+                jsonp: "cb",                //指定参数名称
+                //jsonpCallback: "show_sugg",  //指定回调函数名称
+                success: function (result) {
+                    if (result.s.length === 0) {
+                        return;
+                    }
+                    result.s = result.s.slice(0, 8);
+                    let html = '';
+                    for (let i = 0; i < result.s.length; i++) {
+                        html += '<div class="acp" tabindex="' + (i + 1) + '"><span class="t-normal">' + result.s[i] + '</span></div>'
+                    }
+                    let tempDiv = document.createElement("div");
+                    $('#search_form').addClass('has-suggestions');
+                    auto_div.show();
+                    let newDIV = $(tempDiv).addClass('acp-wrap').html(html);
+                    let fake_acp = document.createElement("div");
+                    fake_acp = $(fake_acp).addClass('acp').attr('tabindex', '0').text($(obj).val());
+                    fake_acp.hide();
+                    auto_div.html(newDIV);
+                    newDIV.prepend(fake_acp);
+                    auto_div.show();
+                    auto_div.find('.acp').on({
+                        mouseenter: function () {
+                            $("div.acp").removeClass('acp--highlight');
+                            $(this).addClass("acp--highlight");
+                            $(this).click(function () {
+                                $('#search_form_input').val($(this).text());
+                                auto_div.hide();
+                                $('#search_form').submit();
+                            })
+                        },
+                        mouseleave: function () {
+                            $("div.acp").removeClass('acp--highlight');
+                        }
+                    });
+                }
+            });
+        } else {
+            $('#search_form').removeClass("has-text").removeClass('has-suggestions');
+            auto_div.hide();
+        }
+    }
+
+    //方向键控制页面控件焦点移动
+    function keyDown(event) {
+        let suggs = $("div.acp");                             //通过class属性值获取控件组合
+        let this_sugg = $(".acp.acp--highlight");             //通过class属性值获取控件组合
+        let focus = document.activeElement;                   //得到处于激活状态的控件
+        let e = window.event || event;                        //获取事件
+        let key = e.keyCode;                                  //得到按下的键盘Ascii码
+        let target_input = $('#search_form_input');           //得到按下的键盘Ascii码
+        let this_tabindex = $(this_sugg).attr('tabindex');
+        let this_flag = 0;
+        let last_flag = 0;
+        if (typeof this_tabindex === typeof undefined || this_tabindex === false) {
+            this_flag = 0;
+        } else {
+            this_flag = parseInt(this_tabindex);
+        }
+        let last_tabindex = $(suggs).last().attr('tabindex');
+        if (typeof last_tabindex === typeof undefined || last_tabindex === false) {
+            last_flag = 0;
+        } else {
+            last_flag = parseInt(last_tabindex);
+        }
+        switch (key) {
+            case 38:                //向上键
+                $(suggs).removeClass('acp--highlight');
+                if (this_flag > 0 && this_flag <= last_flag) {
+                    $(suggs[this_flag - 1]).addClass('acp--highlight');
+                    if (this_flag > 0) {
+                        target_input.val($(suggs[this_flag - 1]).text());
+                    }
+                } else if (this_flag === 0) {
+                    $(suggs[last_flag]).addClass('acp--highlight');
+                    target_input.val($(suggs[last_flag]).text());
+                } else {
+                    //hi
+                }
+                e.returnValue = false;
+                break;
+            case 40:                //向下键
+                $(suggs).removeClass('acp--highlight');
+                if (this_flag >= 0 && this_flag < last_flag) {
+                    $(suggs[this_flag + 1]).addClass('acp--highlight');
+                    target_input.val($(suggs[this_flag + 1]).text());
+                } else {
+                    $(suggs[0]).addClass('acp--highlight');
+                    target_input.val($(suggs[0]).text());
+                }
+                break;
+            case 13:                //回车键
+                if (this_flag > 0) {
+                    target_input.val($(suggs[this_flag]).text());
+                }
+                break;
+        }
+    }
+</script>
+</body>
+
+</html>
