@@ -80,7 +80,7 @@ class Router(object):
             defer.returnValue(http_response_handle())
         else:
             result = yield DbMySql.interaction('dht', self.do_detail, keyword, tid)
-            html = self.render_page(result, 'detail.html')
+            html = self.render_page(result, 'detail_new.html')
             defer.returnValue(html)
 
     def do_search(self, tst, keyword, page, count):
