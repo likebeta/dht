@@ -109,18 +109,19 @@ class Router(object):
         return info
 
     def do_search_detail(self, tst, result):
-        ids = []
-        id_detail_map = dict()
-        for one in result['list']:
-            id_detail_map[one['id']] = one
-            ids.append(str(one['id']))
+        if result['list']:
+            ids = []
+            id_detail_map = dict()
+            for one in result['list']:
+                id_detail_map[one['id']] = one
+                ids.append(str(one['id']))
 
-        sql = "SELECT id, files FROM bt WHERE id IN (%s);" % ','.join(ids)
-        tst.execute(sql)
-        files_detail = [list(one) for one in tst.fetchall()]
-        for line in files_detail:
-            if line[1] is not None:
-                id_detail_map[line[0]]['files'] = json.loads(line[1])
+            sql = "SELECT id, files FROM bt WHERE id IN (%s);" % ','.join(ids)
+            tst.execute(sql)
+            files_detail = [list(one) for one in tst.fetchall()]
+            for line in files_detail:
+                if line[1] is not None:
+                    id_detail_map[line[0]]['files'] = json.loads(line[1])
         return result
 
     def do_detail(self, tst, keyword, tid):
