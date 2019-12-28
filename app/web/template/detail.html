@@ -78,7 +78,7 @@
                             </tr>
                             <tr>
                                 <th class="col-lg-2">Files</th>
-                                <td>{{ info.files | length or 1}}</td>
+                                <td>{{ info.files | length or 1 }}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -102,7 +102,8 @@
                                     <a rel="nofollow" href="{{ magnet_link_dn }}" class="btn nodecor btn-info mgr_20">
                                         <i class="fa fa-magnet"></i>&nbsp;&nbsp;MAGNET
                                     </a>
-                                    <a target="_blank" href="javascript:void(0)" class="btn clip_button_error nodecor btn-success mgr_20">
+                                    <a href="javascript:void(0)"
+                                       class="btn clip_button_error nodecor btn-success mgr_20">
                                         <i class="fa fa-download"></i>&nbsp;&nbsp;TORRENT
                                     </a>
                                     <a href="javascript:void(0)" data-clipboard-text="{{ magnet_link_dn }}"
@@ -120,21 +121,21 @@
                 <h2>File List</h2>
                 <div class="H2Content">
                     <ul style="max-height:500px;overflow:auto;font-size:13px;overflow-x:hidden;">
-                    {% if info.files %}
-                        {% for f in info.files %}
-                        <li style="color:#999;width:680px;line-height:22px;padding-left:10px;">
-                            <i class="fa fa-file-excel-o"></i>
-                            <span style="color: #666; margin: 0 10px;">{{ f.path }}</span>
-                            <em>{{ Util.sizeof_fmt(f.length) }}</em>
-                        </li>
-                        {% endfor %}
-                    {% else %}
-                        <li style="color:#999;width:680px;line-height:22px;padding-left:10px;">
-                            <i class="fa fa-file-excel-o"></i>
-                            <span style="color: #666; margin: 0 10px;">{{ info.name }}</span>
-                            <em>{{ Util.sizeof_fmt(info.length) }}</em>
-                        </li>
-                    {% endif %}
+                        {% if info.files %}
+                            {% for f in info.files %}
+                                <li style="color:#999;width:680px;line-height:22px;padding-left:10px;">
+                                    <i class="fa fa-file-excel-o"></i>
+                                    <span style="color: #666; margin: 0 10px;">{{ f.path }}</span>
+                                    <em>{{ Util.sizeof_fmt(f.length) }}</em>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <li style="color:#999;width:680px;line-height:22px;padding-left:10px;">
+                                <i class="fa fa-file-excel-o"></i>
+                                <span style="color: #666; margin: 0 10px;">{{ info.name }}</span>
+                                <em>{{ Util.sizeof_fmt(info.length) }}</em>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -173,14 +174,14 @@
 </div>
 <div class="footer">
     <div class="footer-wrap">
-        <br />
+        <br/>
         <span class="copyright">Copyright © 2019 <strong>btku.eu.org</strong>. All rights reserved.</span>
     </div>
 </div>
-<script src="//cdnjs.loli.net/ajax/libs/zeroclipboard/2.2.0/ZeroClipboard.min.js"></script>
 <script src="//cdnjs.loli.net/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
-<script src="//cdnjs.loli.net/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
-<link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/sweetalert/1.1.3/sweetalert.min.css"/>
+<script src="//cdnjs.loli.net/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+<link href="//cdnjs.loli.net/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css" rel="stylesheet">
+<script src="//cdnjs.loli.net/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.js"></script>
 <script type="text/javascript">
     $(function () {
         $('.results').hover(function () {
@@ -195,6 +196,19 @@
                 }
             }
         });
+        let clipboard = new ClipboardJS('.clip_button');
+        clipboard.on('success', function (e) {
+            e.clearSelection();
+            showCopyAlert('success', 'Copied successfully!');
+        });
+        clipboard.on('error', function (e) {
+            showCopyAlert('error', 'Copied abortively!');
+        });
+
+        $('.clip_button_error').click(function (event) {
+            event.stopPropagation();
+            showCopyAlert('error', "We don't save torrent!")
+        })
     });
     $('#searchFrom').submit(function (e) {
         e.preventDefault();
@@ -216,6 +230,7 @@
             $("#toolBar").hide();
         }
     });
+
     function searchLog(keyword) {
 //        $.ajax({
 //            cache: false,
@@ -225,30 +240,21 @@
 //        });
     }
 
-    function on_copy(name, title, desc, type) {
-        var clip = new ZeroClipboard($(name));
-        clip.on("ready", function () {
-            this.on("aftercopy", function (event) {
-                showCopyOk(title, desc, type);
-            });
-            this.on("copy", function (event) {
-            })
-        });
-        clip.on("error", function (event) {
-            ZeroClipboard.destroy();
-        });
+    function showCopyAlert(type, title) {
+        Swal.fire({
+            position: 'center',
+            type: type,
+            title: title,
+            showConfirmButton: false,
+            timer: 1500
+        })
     }
 
-    on_copy('.clip_button', "Good job!", "Copied successfully!", "success");
-    on_copy('.clip_button_error', "Stop!", "We don't save torrent!", "error");
-
-    function showCopyOk(title, desc, type) {
-        swal(title, desc, type);
-    }
     function changeLanguage(lang) {
         window.location = $("link[hreflang=" + lang + "]").attr('href');
     }
-    if (self != top) {
+
+    if (self !== top) {
         top.location = self.location;
     }
 </script>
