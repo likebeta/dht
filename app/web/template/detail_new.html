@@ -5,18 +5,16 @@
 
 <head>
     <title>Download {{ info.name }} Torrent, Magnet</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
     <meta name="robots" content="noindex,nofollow">
-    <meta name="referrer" content="origin">
-    <meta name="apple-mobile-web-app-title" content="weather">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="HandheldFriendly" content="true">
     <meta name="apple-mobile-web-app-capable" content="no">
     <link rel="shortcut icon" href="/static/img/doge_ico.png" type="image/png">
     <link title="BTKU" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
     <link rel="stylesheet" href="/static/css/s1764.css" type="text/css">
     <link rel="stylesheet" href="/static/css/r1763.css" type="text/css">
+    <script src="/static/js/common.js"></script>
     <link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="//fonts.loli.net/css?family=Lato|Open+Sans&display=swap" type="text/css">
     <link href="//cdnjs.loli.net/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css" rel="stylesheet">
@@ -40,7 +38,7 @@
             z-index: 999999;
         }
 
-        .toolBar-wrap {
+        .tool-bar-wrap {
             position: fixed;
             bottom: 70px;
             right: 10%;
@@ -49,17 +47,17 @@
         }
 
         @media only screen and (min-width: 1000px) {
-            .toolBar-wrap {
+            .tool-bar-wrap {
                 right: 0;
                 left: 900px;
             }
         }
 
-        #toolBar a {
+        #tool-bar a {
             text-decoration: none;
         }
 
-        #toolBar .barBox {
+        #tool-bar .barBox {
             -webkit-box-sizing: border-box;
             box-sizing: border-box;
             display: inline-block;
@@ -71,21 +69,21 @@
             text-align: center;
         }
 
-        #toolBar .barBox .fa {
+        #tool-bar .barBox .fa {
             font-size: 48px;
             line-height: 48px;
         }
 
-        #toolBar .barBox i {
+        #tool-bar .barBox i {
             display: block;
             color: #bebebe;
         }
 
-        #toolBar .barBox i:hover {
+        #tool-bar .barBox i:hover {
             color: #000;
         }
 
-        #toolBar .hidemenu {
+        #tool-bar .hidemenu {
             position: absolute;
             top: -20px;
             left: -110px;
@@ -93,12 +91,12 @@
             padding-right: 10px;
         }
 
-        #toolBar .hidemenu .box_shadow {
+        #tool-bar .hidemenu .box_shadow {
             width: 100px;
             background: #F8FEFC;
         }
 
-        #toolBar .hidemenu a {
+        #tool-bar .hidemenu a {
             display: block;
             padding: 8px;
             height: 20px;
@@ -107,12 +105,12 @@
             color: #999;
         }
 
-        #toolBar .box_shadow:hover .hidemenu :hover {
+        #tool-bar .box_shadow:hover .hidemenu :hover {
             display: block;
             color: #000;
         }
 
-        #toolBar .box_shadow:hover .hidemenu {
+        #tool-bar .box_shadow:hover .hidemenu {
             display: block;
         }
 
@@ -132,21 +130,21 @@
             text-align: left;
         }
 
-        .down__info {
+        .down-info {
             padding: 5px 10px;
         }
 
-        .down__info a {
+        .down-info a {
             margin-top: 5px;
         }
 
-        .down__info .btn:hover {
+        .down-info .btn:hover {
             color: #fff;
             background-color: #5bc0de;
             border-color: #46b8da;
         }
 
-        .down__info .btn:hover i {
+        .down-info .btn:hover i {
             color: #fff;
         }
 
@@ -289,17 +287,17 @@
                                 <tbody>
                                 <tr>
                                     <td colspan="2">
-                                        <div class="down__info">
+                                        <div class="down-info">
                                             <a rel="nofollow" href="{{ magnet_link_dn }}"
                                                class="btn btn-info">
                                                 <i class="fa fa-magnet"></i>&nbsp;&nbsp;MAGNET
                                             </a>
-                                            <a target="_blank" href="javascript:void(0)"
-                                               class="btn btn-success">
+                                            <a rel="nofollow" href="javascript:void(0)"
+                                               class="btn btn-success clip_button_error">
                                                 <i class="fa fa-download"></i>&nbsp;&nbsp;TORRENT
                                             </a>
                                             <a href="javascript:void(0)" data-clipboard-text="{{ magnet_link_dn }}"
-                                               rel="nofollow" class="btn btn-warning clip_button">
+                                               class="btn btn-warning clip_button">
                                                 <i class="fa fa-paper-plane-o"></i>&nbsp;&nbsp;COPY LINK
                                             </a>
                                         </div>
@@ -354,7 +352,7 @@
                 </div>
             </div>
         </div>
-        <ul id="toolBar" class="toolBar-wrap">
+        <ul id="tool-bar" class="tool-bar-wrap">
             <li>
                 <a id="gotopTool" onclick="$('html,body').animate({scrollTop: '0px'}, 800);" class="gotop barBox"
                    href="javascript:void(0);" title="goto top">
@@ -367,11 +365,11 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#search_form_input').on('input propertychange', function () {
-            do_sugg(this);
+            do_sugg(this, '#search_form', '#search_form_input');
         }).focus(function () {
             $('#search_form').addClass("search--focus");
             $('html').addClass("has-search-focus");
-            do_sugg(this);
+            do_sugg(this, '#search_form', '#search_form_input');
         });
 
         $('#search_form_input_clear').click(function () {
@@ -403,7 +401,7 @@
             }
         }).keydown(function (event) {
             if ($('#search__autocomplete').is(':visible')) {
-                keyDown(event);
+                keyDown(event, '#search_form_input');
             }
         });
 
@@ -416,6 +414,10 @@
             showCopyAlert('error', 'Copied abortively!');
         });
 
+        $('.clip_button_error').click(function (event) {
+            showCopyAlert('error', "We don't save torrent!")
+        });
+
         let header_spaces_css = {
             height: $('#header_wrapper').outerHeight(true)
         };
@@ -423,133 +425,12 @@
         $(window).bind("scroll", function () {
             let scrollTop = $(window).scrollTop();
             if (scrollTop > 100) {
-                $("#toolBar").show();
+                $("#tool-bar").show();
             } else {
-                $("#toolBar").hide();
+                $("#tool-bar").hide();
             }
         });
     });
-
-    function showCopyAlert(type, title) {
-        Swal.fire({
-            type: type,
-            title: title,
-            showConfirmButton: false,
-            // target: document.querySelector("#links"),
-            position: "center",
-            // customContainerClass: 'position-absolute',
-            timer: 1500
-        })
-    }
-
-    function do_sugg(obj) {
-        let count = $(obj).val().length;
-        let auto_div = $("#search__autocomplete");
-        if (count > 0) {
-            $('#search_form').addClass("has-text");
-            $.ajax({
-                cache: true,
-                async: true,
-                url: "https://suggestion.baidu.com/su?wd=" + $(obj).val(),
-                dataType: "jsonp",          //指定服务器返回的数据类型
-                jsonp: "cb",                //指定参数名称
-                //jsonpCallback: "show_sugg",  //指定回调函数名称
-                success: function (result) {
-                    if (result.s.length === 0) {
-                        return;
-                    }
-                    result.s = result.s.slice(0, 8);
-                    let html = '';
-                    for (let i = 0; i < result.s.length; i++) {
-                        html += '<div class="acp" tabindex="' + (i + 1) + '"><span class="t-normal">' + result.s[i] + '</span></div>'
-                    }
-                    let tempDiv = document.createElement("div");
-                    $('#search_form').addClass('has-suggestions');
-                    auto_div.show();
-                    let newDIV = $(tempDiv).addClass('acp-wrap').html(html);
-                    let fake_acp = document.createElement("div");
-                    fake_acp = $(fake_acp).addClass('acp').attr('tabindex', '0').text($(obj).val());
-                    fake_acp.hide();
-                    auto_div.html(newDIV);
-                    newDIV.prepend(fake_acp);
-                    auto_div.show();
-                    auto_div.find('.acp').on({
-                        mouseenter: function () {
-                            $("div.acp").removeClass('acp--highlight');
-                            $(this).addClass("acp--highlight");
-                            $(this).click(function () {
-                                $('#search_form_input').val($(this).text());
-                                auto_div.hide();
-                                $('#search_form').submit();
-                            })
-                        },
-                        mouseleave: function () {
-                            $("div.acp").removeClass('acp--highlight');
-                        }
-                    });
-                }
-            });
-        } else {
-            $('#search_form').removeClass("has-text").removeClass('has-suggestions');
-            auto_div.hide();
-        }
-    }
-
-    //方向键控制页面控件焦点移动
-    function keyDown(event) {
-        let suggs = $("div.acp");                             //通过class属性值获取控件组合
-        let this_sugg = $(".acp.acp--highlight");             //通过class属性值获取控件组合
-        let focus = document.activeElement;                   //得到处于激活状态的控件
-        let e = window.event || event;                        //获取事件
-        let key = e.keyCode;                                  //得到按下的键盘Ascii码
-        let target_input = $('#search_form_input');           //得到按下的键盘Ascii码
-        let this_tabindex = $(this_sugg).attr('tabindex');
-        let this_flag = 0;
-        let last_flag = 0;
-        if (typeof this_tabindex === typeof undefined || this_tabindex === false) {
-            this_flag = 0;
-        } else {
-            this_flag = parseInt(this_tabindex);
-        }
-        let last_tabindex = $(suggs).last().attr('tabindex');
-        if (typeof last_tabindex === typeof undefined || last_tabindex === false) {
-            last_flag = 0;
-        } else {
-            last_flag = parseInt(last_tabindex);
-        }
-        switch (key) {
-            case 38:                //向上键
-                $(suggs).removeClass('acp--highlight');
-                if (this_flag > 0 && this_flag <= last_flag) {
-                    $(suggs[this_flag - 1]).addClass('acp--highlight');
-                    if (this_flag > 0) {
-                        target_input.val($(suggs[this_flag - 1]).text());
-                    }
-                } else if (this_flag === 0) {
-                    $(suggs[last_flag]).addClass('acp--highlight');
-                    target_input.val($(suggs[last_flag]).text());
-                } else {
-                    //hi
-                }
-                e.returnValue = false;
-                break;
-            case 40:                //向下键
-                $(suggs).removeClass('acp--highlight');
-                if (this_flag >= 0 && this_flag < last_flag) {
-                    $(suggs[this_flag + 1]).addClass('acp--highlight');
-                    target_input.val($(suggs[this_flag + 1]).text());
-                } else {
-                    $(suggs[0]).addClass('acp--highlight');
-                    target_input.val($(suggs[0]).text());
-                }
-                break;
-            case 13:                //回车键
-                if (this_flag > 0) {
-                    target_input.val($(suggs[this_flag]).text());
-                }
-                break;
-        }
-    }
 </script>
 </body>
 

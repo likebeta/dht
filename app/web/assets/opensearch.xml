@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<OpenSearchDescription
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="https://a9.com/-/spec/opensearch/1.1/ ">
+<OpenSearchDescription xmlns="https://a9.com/-/spec/opensearch/1.1/"
+                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                       xsi:schemaLocation="https://a9.com/-/spec/opensearch/1.1/ ">
     <ShortName>BTKU</ShortName>
     <Description>Free Torrent Search</Description>
     <InputEncoding>UTF-8</InputEncoding>
-    <Image>https://btku.eu.org/doge_ico.png</Image>
+    <Image>https://btku.eu.org/static/img/doge_ico.png</Image>
     <LongName>BTKU Torrent Search</LongName>
     <Url type="text/html" method="get" template="https://btku.eu.org/q?s={searchTerms}"/>
 </OpenSearchDescription>

@@ -19,7 +19,7 @@ from util.response import http_response_handle
 
 class Router(object):
     def __init__(self):
-        self.env = jinja2.Environment(loader=jinja2.FileSystemLoader('assets/template'))
+        self.env = jinja2.Environment(loader=jinja2.FileSystemLoader('template'))
         self.json_path = {
             '/': self.index,
             '/q': self.search,
@@ -123,19 +123,20 @@ class Router(object):
         return info
 
     def do_search_detail(self, tst, result):
-        ids = []
-        id_detail_map = dict()
-        for one in result['list']:
-            id_detail_map[one['id']] = one
-            ids.append(str(one['id']))
+        if result['list']:
+            ids = []
+            id_detail_map = dict()
+            for one in result['list']:
+                id_detail_map[one['id']] = one
+                ids.append(str(one['id']))
 
-        sql = "SELECT id, files FROM bt WHERE id IN (%s);" % ','.join(ids)
-        tst.execute(sql)
-        ppp = tst.fetchall()
-        files_detail = [list(one) for one in ppp]
-        for line in files_detail:
-            if line[1] is not None:
-                id_detail_map[line[0]]['files'] = json.loads(line[1])
+            sql = "SELECT id, files FROM bt WHERE id IN (%s);" % ','.join(ids)
+            tst.execute(sql)
+            ppp = tst.fetchall()
+            files_detail = [list(one) for one in ppp]
+            for line in files_detail:
+                if line[1] is not None:
+                    id_detail_map[line[0]]['files'] = json.loads(line[1])
         return result
 
     def do_detail(self, tst, keyword, tid):
