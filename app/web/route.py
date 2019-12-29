@@ -46,7 +46,7 @@ class Router(object):
 
     @http_response_handle(response='html')
     def index(self, args, request):
-        tpl = self.env.get_template('index_new.html', globals={'Util': Util})
+        tpl = self.env.get_template('index.html', globals={'Util': Util})
         return tpl.render().encode('utf-8')
 
     @defer.inlineCallbacks
@@ -65,7 +65,7 @@ class Router(object):
         else:
             result = yield DbMySql.interaction('search', self.do_search, keyword, page, 10)
             result = yield DbMySql.interaction('dht', self.do_search_detail, result)
-            html = self.render_page(result, 'search_new.html')
+            html = self.render_page(result, 'search.html')
             defer.returnValue(html)
 
     @defer.inlineCallbacks
@@ -80,7 +80,7 @@ class Router(object):
             defer.returnValue(http_response_handle())
         else:
             result = yield DbMySql.interaction('dht', self.do_detail, keyword, tid)
-            html = self.render_page(result, 'detail_new.html')
+            html = self.render_page(result, 'detail.html')
             defer.returnValue(html)
 
     def do_search(self, tst, keyword, page, count):

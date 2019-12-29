@@ -4,13 +4,13 @@
         itemscope="" itemtype="//schema.org/SearchResultsPage" lang="zh-cn">
 
 <head>
-    <title>{{ info.name }} - BTKU</title>
+    <title>{{ info.keyword }} - BTKU</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
     <meta name="robots" content="noindex,nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="no">
-    <link rel="shortcut icon" href="/static/img/doge_ico.png" type="image/png">
+    <link rel="shortcut icon" href="/static/img/favicon.png" type="image/png">
     <link title="BTKU" type="application/opensearchdescription+xml" rel="search" href="/opensearch.xml">
     <link rel="stylesheet" href="/static/css/s1764.css" type="text/css">
     <link rel="stylesheet" href="/static/css/r1763.css" type="text/css">
@@ -114,61 +114,86 @@
             display: block;
         }
 
-        .file-info {
-            padding-top: 10px;
+        .result--more {
+            width: 150px;
+            display: inline-block;
         }
 
-        table td {
-            color: #555;
+        .result {
+            margin-bottom: 0;
         }
 
-        .col-lg-2 {
-            padding-left: 10px;
-            width: 80px;
-            font-weight: bold;
-            line-height: 22px;
-            text-align: left;
+        .result__body:hover {
+            background-color: #eee;
         }
 
-        .down-info {
-            padding: 5px 10px;
+        @media only screen and (min-width: 540px) {
+            .result__body:hover .down__link {
+                display: block;
+            }
         }
 
-        .down-info a {
-            margin-top: 5px;
+        .result--more {
+            margin-top: 10px;
         }
 
-        .down-info .btn:hover {
-            color: #fff;
-            background-color: #5bc0de;
-            border-color: #46b8da;
+        .result ul {
+            padding-top: .5em;
+            padding-bottom: 0;
         }
 
-        .down-info .btn:hover i {
-            color: #fff;
+        .result li {
+            font-size: 12px;
+            /*line-height: 18px;*/
+            color: #666;
+            padding: 3px 0;
+            /*height: 18px;*/
+            /*overflow: hidden;*/
         }
 
-        .file-list-content i, .file-list-content em {
-            color: #999;
-        }
-
-        .file-list-content ul {
-            font-size: 13px;
-            padding: 0 10px;
-        }
-
-        .file-list-content ul li {
-            margin: 2px 0;
+        .result li i {
             color: #666;
         }
 
-        .file-list-content ul li span {
-            margin: 0 10px;
+        .result__a, .result__a:visited, .result__a:visited:hover {
+            color: #0000cc;
         }
 
-        .down-notice-content {
-            margin: 0 10px;
-            color: #909090;
+        .result__a strong {
+            font-style: normal;
+            color: #c00;
+        }
+
+        .result__intro {
+            height: 24px;
+            color: #888;
+            font-size: 12px;
+            line-height: 24px;
+        }
+
+        .result__intro a {
+            float: left;
+            height: 23px;
+            text-align: center;
+            line-height: 23px;
+            display: block;
+            color: #428bca;
+            margin: 4px 0 0 15px;
+        }
+
+        .result__intro label {
+            margin-right: 10px;
+        }
+
+        .down__link {
+            position: relative;
+            float: right;
+            /*margin-right: 25px;*/
+            display: none;
+        }
+
+        .down__link a {
+            text-decoration: none;
         }
 
         .position-absolute {
@@ -208,6 +233,7 @@
         }
     </style>
 </head>
+{% set encode_keyword = info.keyword|urlencode %}
 <body class="body--serp">
 <div class="red-area"></div>
 <div class="site-wrapper js-site-wrapper" style="min-height: 756px;">
@@ -235,8 +261,13 @@
             <div class="zcm-wrap zcm-wrap--header is-noscript-hidden">
                 <div class="zcm">
                     <ul class="zcm__menu zcm__constant has-zci">
+                        <li class="zcm__item">
+                            <a data-zci-link="web" class="zcm__link js-zci-link js-zci-link--web is-active"
+                               href="javascript:void(0);">Magnet</a>
+                        </li>
                     </ul>
                     <ul class="zcm__menu zcm__dynamic has-zci" id="result-counter">
+                        <li class="zcm__item">About {{ Util.format_size(info.total) }} results</li>
                     </ul>
                 </div>
             </div>
@@ -252,96 +283,72 @@
         <div class="cw">
             <div id="links_wrapper" class="serp__results js-serp-results">
                 <div class="results--main">
+                    <div class="search-filters-wrap" style="display: none">
+                        <div class="js-search-filters search-filters">
+                            <div id="chinese-only"
+                                 class="dropdown dropdown--region is-active has-inactive-region"></div>
+                            <div class="resultCounter">About {{ Util.format_size(info.total) }} results</div>
+                        </div>
+                    </div>
+
                     <div id="links" class="results js-results">
-                        <div class="file-info">
-                            <div class="clearfix">
-                                <table style="float:left;">
-                                    <tbody>
-                                    <tr>
-                                        <th class="col-lg-2">AddTime</th>
-                                        <td>{{ Util.format_ts(info.create_time) }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="col-lg-2">Updated</th>
-                                        <td>{{ Util.format_ts(info.access_ts) }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="col-lg-2">Size</th>
-                                        <td>{{ Util.sizeof_fmt(info.length) }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="col-lg-2">Hot</th>
-                                        <td>{{ info.hit }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th class="col-lg-2">Files</th>
-                                        <td>{{ info.files | length or 1}}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <div class="qrcode"></div>
-                            </div>
-                            {% set magnet_link = "magnet:?xt=urn:btih:" + info.info_hash | upper %}
-                            {% set magnet_link_dn = magnet_link + "&dn=" + info.name | urlencode %}
-                            <table>
-                                <tbody>
-                                <tr>
-                                    <td colspan="2">
-                                        <div class="down-info">
-                                            <a rel="nofollow" href="{{ magnet_link_dn }}"
-                                               class="btn btn-info">
-                                                <i class="fa fa-magnet"></i>&nbsp;&nbsp;MAGNET
-                                            </a>
-                                            <a rel="nofollow" href="javascript:void(0)"
-                                               class="btn btn-success clip_button_error">
-                                                <i class="fa fa-download"></i>&nbsp;&nbsp;TORRENT
-                                            </a>
-                                            <a href="javascript:void(0)" data-clipboard-text="{{ magnet_link_dn }}"
-                                               class="btn btn-warning clip_button">
-                                                <i class="fa fa-paper-plane-o"></i>&nbsp;&nbsp;COPY LINK
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="file-list">
-                            <h2>File List</h2>
-                            <div class="file-list-content">
-                                <ul>
-                                    {% if info.files %}
-                                    {% for f in info.files %}
-                                    <li>
-                                        <i class="fa fa-file-excel-o"></i>
-                                        <span>{{ f.path }}</span>
-                                        <em>{{ Util.sizeof_fmt(f.length) }}</em>
-                                    </li>
-                                    {% endfor %}
-                                    {% else %}
-                                    <li>
-                                        <i class="fa fa-file-excel-o"></i>
-                                        <span>{{ info.name }}</span>
-                                        <em>{{ Util.sizeof_fmt(info.length) }}</em>
-                                    </li>
-                                    {% endif %}
-                                </ul>
+                        {% for item in info.list %}
+                        <div class="result results_links_deep highlight_d result--url-above-snippet">
+                            <div class="result__body links_main links_deep">
+                                <h2 class="result__title">
+                                    <a class="result__a" rel="noopener" title="{{ item.name }}"
+                                       href="/d?i={{ item.id }}&s={{ encode_keyword }}" target="_blank">
+                                        {{ Util.highlight_words(item.name, info.keyword) }}
+                                    </a>
+                                </h2>
+                                <div class="result__snippet js-result-snippet">
+                                    <ul>
+                                        {% if item.files | length > 0 %}
+                                        {% for f in item.files[:3] %}
+                                        <li>
+                                            <i class="fa fa-file-video-o"></i> {{ f.path }}
+                                            <span style="color:#999">{{ Util.sizeof_fmt(f.length) }}</span>
+                                        </li>
+                                        {% endfor %}
+                                        {% if item.files | length > 3 %}
+                                        <li>....</li>
+                                        {% endif %}
+                                        {% else %}
+                                        <li>
+                                            <i class="fa fa-file-video-o"></i> {{ item.name }}
+                                            <span style="color:#999">{{ Util.sizeof_fmt(item.length) }}</span>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                                <p class="result__intro">
+                                    <span>Files: </span><label>{{ item.files | length or 1}}</label>
+                                    <span>Size: </span><label>{{ Util.sizeof_fmt(item.length) }}</label>
+                                    <span>Hot: </span><label>{{ item.hit }}</label>
+                                    <span>Time: </span><label> {{ Util.calc_days(item.create_time) }} days</label>
+                                    <span class="down__link">
+                                    {% set magnet_link = "magnet:?xt=urn:btih:" + item.info_hash | upper %}
+                                    {% set magnet_link_dn = magnet_link + "&dn=" + item.name | urlencode %}
+                                        <a rel="nofollow" href="{{ magnet_link_dn }}"><i class="fa fa-magnet"></i> Magnet</a>
+                                        <a rel="nofollow" data-clipboard-text="{{ magnet_link_dn }}" class="clip_button"
+                                           href="javascript:void(0)"><i class="fa fa-paper-plane-o"></i> Copy</a>
+                                    </span>
+                                </p>
                             </div>
                         </div>
-                        <div class="down-notice">
-                            <h2>Tips</h2>
-                            <div class="down-notice-content">
-                                <p>We do not store any content of the torrent ,only gather and
-                                    index the
-                                    metadata such as file name ,file size, magnet link from the DHT network. We do not
-                                    store torrent
-                                    files and can not provide a download url, you can download the torrent file through
-                                    the third
-                                    party website or magenet to get the torrent contents. Please pay attention that we
-                                    are not
-                                    responsible for the authenticity and legality of the torrent files.</p>
-                            </div>
+                        {% endfor %}
+                        {% if info.pages.prev_btn %}
+                        <div class="result result--more" style="float:left;">
+                            <a href="/q?s={{ encode_keyword }}&p={{ info.pages.page - 1 }}"
+                               class="result--more__btn btn btn--full">Prev</a>
                         </div>
+                        {% endif %}
+                        {% if info.pages.next_btn %}
+                        <div class="result result--more" style="float:right;">
+                            <a href="/q?s={{ encode_keyword }}&p={{ info.pages.page + 1 }}"
+                               class="result--more__btn btn btn--full">Next</a>
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="results--sidebar js-results-sidebar">
                         <div class="sidebar-modules js-sidebar-modules">
@@ -412,10 +419,6 @@
         });
         clipboard.on('error', function (e) {
             showCopyAlert('error', 'Copied abortively!');
-        });
-
-        $('.clip_button_error').click(function (event) {
-            showCopyAlert('error', "We don't save torrent!")
         });
 
         let header_spaces_css = {

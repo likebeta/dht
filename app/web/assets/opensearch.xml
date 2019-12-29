@@ -5,7 +5,7 @@
     <ShortName>BTKU</ShortName>
     <Description>Free Torrent Search</Description>
     <InputEncoding>UTF-8</InputEncoding>
-    <Image>https://btku.eu.org/static/img/doge_ico.png</Image>
+    <Image>https://btku.eu.org/static/img/favicon.png</Image>
     <LongName>BTKU Torrent Search</LongName>
     <Url type="text/html" method="get" template="https://btku.eu.org/q?s={searchTerms}"/>
 </OpenSearchDescription>
