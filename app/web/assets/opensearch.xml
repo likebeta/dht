@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<OpenSearchDescription xmlns="https://a9.com/-/spec/opensearch/1.1/"
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/"
                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                        xsi:schemaLocation="https://a9.com/-/spec/opensearch/1.1/ ">
     <ShortName>BTKU</ShortName>
